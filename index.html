@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptMax — Próximamente | La Revolución del Prompt Engineering</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Space Grotesk, Inter y JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        base: '#07070c',
+                        surface: '#0e0e18',
+                        violetNeon: '#8b5cf6',
+                        cyanNeon: '#06b6d4',
+                        magentaNeon: '#ec4899',
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 6s ease infinite',
+                        'float-slow': 'float 7s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            },
+                        },
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: '1', filter: 'brightness(1)' },
+                            '50%': { opacity: '0.75', filter: 'brightness(1.3)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-deep: #07070c;
+            --violet: #8b5cf6;
+            --cyan: #06b6d4;
+            --magenta: #ec4899;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #f8fafc;
+            overflow-x: hidden;
+            selection-background-color: #8b5cf6;
+        }
+
+        /* Cuadrícula tecnológica en perspectiva */
+        .tech-grid-bg {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(139, 92, 246, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(6, 182, 212, 0.07) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 35%, #000 40%, transparent 100%);
+        }
+
+        /* Tarjetas Glassmorphism con brillo seguidor de cursor */
+        .glass-card {
+            background: rgba(16, 16, 28, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(
+                600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(139, 92, 246, 0.14),
+                rgba(6, 182, 212, 0.05) 40%,
+                transparent 80%
+            );
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .glass-card:hover::before {
+            opacity: 1;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 20px 50px -15px rgba(139, 92, 246, 0.2), 0 0 25px -5px rgba(6, 182, 212, 0.15);
+        }
+
+        /* Botón principal con borde luminoso */
+        .btn-neon {
+            background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 50%, #ec4899 100%);
+            background-size: 200% 200%;
+            animation: gradient-x 5s ease infinite;
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+            transition: all 0.3s ease;
+        }
+
+        .btn-neon:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 0 35px rgba(6, 182, 212, 0.65), 0 0 60px rgba(236, 72, 153, 0.35);
+        }
+
+        .btn-neon:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        /* Aparición suave en scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Etiquetas de sintaxis del Super Prompt */
+        .token-tag {
+            background: rgba(139, 92, 246, 0.18);
+            border: 1px solid rgba(139, 92, 246, 0.45);
+            color: #ddd6fe;
+            padding: 1px 6px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .token-param {
+            background: rgba(6, 182, 212, 0.16);
+            border: 1px solid rgba(6, 182, 212, 0.45);
+            color: #a5f3fc;
+            padding: 1px 6px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        .token-style {
+            background: rgba(236, 72, 153, 0.16);
+            border: 1px solid rgba(236, 72, 153, 0.45);
+            color: #fbcfe8;
+            padding: 1px 6px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #07070c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e1b4b;
+            border-radius: 9999px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4c1d95;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen relative selection:bg-violet-500 selection:text-white">
+
+    <!-- Canvas de Partículas Neuronales Interactivas -->
+    <canvas id="neural-canvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Canvas para Confeti en pantalla al registrarse -->
+    <canvas id="confetti-canvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <!-- Cuadrícula en perspectiva y Orbes de Neón Difuminados -->
+    <div class="fixed inset-0 tech-grid-bg pointer-events-none z-0"></div>
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-violet-600/20 rounded-full blur-[130px] pointer-events-none z-0"></div>
+    <div class="fixed top-1/3 -right-40 w-[28rem] h-[28rem] bg-cyan-500/15 rounded-full blur-[140px] pointer-events-none z-0"></div>
+    <div class="fixed -bottom-40 left-1/3 w-96 h-96 bg-pink-600/15 rounded-full blur-[130px] pointer-events-none z-0"></div>
+
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-[#07070c]/75 border-b border-white/10 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo de PromptMax -->
+            <a href="#" class="flex items-center gap-3 group focus:outline-none">
+                <div class="relative w-11 h-11 rounded-xl bg-gradient-to-br from-violet-600 via-cyan-500 to-pink-500 p-[1px] shadow-lg shadow-violet-500/25 group-hover:shadow-cyan-500/40 transition-all duration-300">
+                    <div class="w-full h-full bg-[#090912] rounded-[11px] flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-violet-500/20 to-cyan-400/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <i data-lucide="sparkles" class="w-5 h-5 text-cyan-400 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300"></i>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <span class="font-display font-bold text-xl sm:text-2xl tracking-tight text-white">
+                        Prompt<span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-cyan-400 to-pink-400">Max</span>
+                    </span>
+                    <!-- Badge parpadeante v1.0 EN CAMINO -->
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-violet-500/15 text-violet-300 border border-violet-500/30 shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 -ml-3"></span>
+                        v1.0 EN CAMINO
+                    </span>
+                </div>
+            </a>
+
+            <!-- Enlaces de navegación (Desktop) -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#demo-section" class="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="wand-2" class="w-4 h-4 text-violet-400"></i>
+                    Simulador en Vivo
+                </a>
+                <a href="#bento-section" class="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="layers" class="w-4 h-4 text-cyan-400"></i>
+                    Arquitectura
+                </a>
+                <a href="#roadmap-section" class="hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="activity" class="w-4 h-4 text-pink-400"></i>
+                    Estado Beta (88%)
+                </a>
+            </nav>
+
+            <!-- Botón Rápido Unirse a la Lista VIP -->
+            <div class="flex items-center gap-3">
+                <button onclick="scrollToWaitlist()" class="relative inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-white/5 hover:bg-white/10 border border-white/15 hover:border-cyan-400/50 transition-all duration-300 shadow-lg shadow-violet-950/30 group">
+                    <span class="w-2 h-2 rounded-full bg-gradient-to-r from-cyan-400 to-violet-400 group-hover:scale-125 transition-transform"></span>
+                    <span>Unirse a la Lista VIP</span>
+                    <i data-lucide="arrow-up-right" class="w-4 h-4 text-cyan-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10">
+        <section class="pt-12 pb-20 sm:pt-20 sm:pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div class="text-center max-w-4xl mx-auto">
+                
+                <!-- Badge Superior -->
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-violet-500/15 via-cyan-500/15 to-pink-500/15 border border-violet-500/30 text-xs sm:text-sm font-medium text-cyan-300 mb-8 shadow-[0_0_30px_rgba(139,92,246,0.2)] animate-float-slow">
+                    <span>🚀 PRÓXIMAMENTE • LA REVOLUCIÓN DEL PROMPT ENGINEERING</span>
+                </div>
+
+                <!-- Título Principal Impactante -->
+                <h1 class="font-display font-bold text-4xl sm:text-6xl lg:text-7xl tracking-tight leading-[1.08] text-white mb-6">
+                    Desbloquea el verdadero poder de la IA con
+                    <span class="block mt-1 text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-cyan-300 to-pink-500 animate-gradient-x">
+                        PromptMax
+                    </span>
+                </h1>
+
+                <!-- Subtítulo Atractivo -->
+                <p class="text-base sm:text-lg lg:text-xl text-slate-300/90 max-w-2xl mx-auto font-normal leading-relaxed mb-10">
+                    Muy pronto estará disponible la plataforma definitiva para <span class="text-white font-medium">diseñar, estructurar y potenciar prompts de nivel profesional</span> en segundos. Domina generadores de arte, video, música y código con precisión quirúrgica.
+                </p>
+
+                <div class="mb-12">
+                    <p class="text-xs font-mono uppercase tracking-[0.25em] text-slate-400 mb-4 flex items-center justify-center gap-2">
+                        <i data-lucide="clock" class="w-3.5 h-3.5 text-cyan-400"></i>
+                        Lanzamiento Oficial de la Plataforma En:
+                    </p>
+                    <div class="grid grid-cols-4 gap-3 sm:gap-5 max-w-xl mx-auto" id="countdown-container">
+                        <!-- Días -->
+                        <div class="glass-card rounded-2xl p-3 sm:p-5 text-center border border-white/10">
+                            <div id="cd-days" class="font-display font-bold text-2xl sm:text-4xl lg:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 tabular-nums">14</div>
+                            <div class="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-cyan-400 mt-1">Días</div>
+                        </div>
+                        <!-- Horas -->
+                        <div class="glass-card rounded-2xl p-3 sm:p-5 text-center border border-white/10">
+                            <div id="cd-hours" class="font-display font-bold text-2xl sm:text-4xl lg:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 tabular-nums">08</div>
+                            <div class="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-violet-400 mt-1">Horas</div>
+                        </div>
+                        <!-- Minutos -->
+                        <div class="glass-card rounded-2xl p-3 sm:p-5 text-center border border-white/10">
+                            <div id="cd-minutes" class="font-display font-bold text-2xl sm:text-4xl lg:text-5xl text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 tabular-nums">42</div>
+                            <div class="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-pink-400 mt-1">Minutos</div>
+                        </div>
+                        <!-- Segundos -->
+                        <div class="glass-card rounded-2xl p-3 sm:p-5 text-center border border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.12)]">
+                            <div id="cd-seconds" class="font-display font-bold text-2xl sm:text-4xl lg:text-5xl text-cyan-300 tabular-nums">19</div>
+                            <div class="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-cyan-300 mt-1">Segundos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="waitlist-box" class="max-w-2xl mx-auto">
+                    <div class="glass-card rounded-3xl p-6 sm:p-8 border border-violet-500/30 shadow-[0_0_50px_-12px_rgba(139,92,246,0.3)] relative">
+                        <!-- Resplandor superior decorativo -->
+                        <div class="absolute -top-px left-12 right-12 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+
+                        <!-- Vista del Formulario -->
+                        <form id="waitlist-form" onsubmit="handleWaitlistSubmit(event)" class="space-y-5 relative z-10" novalidate>
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-left border-b border-white/10 pb-4">
+                                <div>
+                                    <h2 class="font-display font-bold text-lg sm:text-xl text-white flex items-center gap-2">
+                                        <i data-lucide="crown" class="w-5 h-5 text-amber-400"></i>
+                                        Acceso Anticipado & Pase de Miembro Fundador
+                                    </h2>
+                                    <p class="text-xs sm:text-sm text-slate-400">Recibe <span class="text-cyan-300 font-medium">500 créditos Pro gratis</span> y bloqueo de tarifa vitalicia en el día 1.</p>
+                                </div>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono self-start sm:self-center">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    Cupos VIP Abiertos
+                                </span>
+                            </div>
+
+                            <!-- Selector de interés principal -->
+                            <div class="text-left">
+                                <label class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-2.5">
+                                    1. Selecciona tu especialidad principal (Opcional):
+                                </label>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="interest-selector">
+                                    <button type="button" onclick="selectInterest(this, 'Imágenes & Arte IA')" class="interest-btn active-interest flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-medium border transition-all bg-violet-600/25 border-violet-400 text-white shadow-sm">
+                                        <i data-lucide="image" class="w-4 h-4 text-violet-300"></i>
+                                        <span>Imágenes</span>
+                                    </button>
+                                    <button type="button" onclick="selectInterest(this, 'Video & Motion IA')" class="interest-btn flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-medium border transition-all bg-white/5 border-white/10 text-slate-300 hover:bg-white/10">
+                                        <i data-lucide="film" class="w-4 h-4 text-cyan-400"></i>
+                                        <span>Video</span>
+                                    </button>
+                                    <button type="button" onclick="selectInterest(this, 'Música & Metatags')" class="interest-btn flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-medium border transition-all bg-white/5 border-white/10 text-slate-300 hover:bg-white/10">
+                                        <i data-lucide="music" class="w-4 h-4 text-pink-400"></i>
+                                        <span>Música</span>
+                                    </button>
+                                    <button type="button" onclick="selectInterest(this, 'Código & LLMs')" class="interest-btn flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-medium border transition-all bg-white/5 border-white/10 text-slate-300 hover:bg-white/10">
+                                        <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i>
+                                        <span>Código/Texto</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Input de Correo + Botón de Envío -->
+                            <div class="text-left">
+                                <label for="vip-email" class="block text-xs font-mono uppercase tracking-wider text-slate-400 mb-2">
+                                    2. Tu correo profesional o creativo:
+                                </label>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <div class="relative flex-1">
+                                        <i data-lucide="mail" class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                                        <input 
+                                            type="email" 
+                                            id="vip-email" 
+                                            required
+                                            placeholder="tu-correo@dominio.com" 
+                                            class="w-full pl-12 pr-4 py-3.5 rounded-xl bg-[#07070c]/90 border border-white/15 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-white placeholder-slate-500 text-sm focus:outline-none transition-all"
+                                        >
+                                    </div>
+                                    <button 
+                                        type="submit" 
+                                        class="btn-neon px-7 py-3.5 rounded-xl font-display font-bold text-sm sm:text-base text-white flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer"
+                                    >
+                                        <span>Reservar mi acceso VIP</span>
+                                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                <p id="email-error" class="hidden text-xs text-rose-400 mt-2 flex items-center gap-1.5">
+                                    <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+                                    <span>Por favor ingresa un correo electrónico válido (ej. nombre@correo.com).</span>
+                                </p>
+                            </div>
+
+                            <!-- Contador de usuarios registrados en vivo -->
+                            <div class="pt-2 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex -space-x-2">
+                                        <span class="w-7 h-7 rounded-full bg-gradient-to-tr from-violet-600 to-cyan-400 border-2 border-[#0e0e18] flex items-center justify-center text-[10px] font-bold text-white">AL</span>
+                                        <span class="w-7 h-7 rounded-full bg-gradient-to-tr from-pink-600 to-violet-400 border-2 border-[#0e0e18] flex items-center justify-center text-[10px] font-bold text-white">MR</span>
+                                        <span class="w-7 h-7 rounded-full bg-gradient-to-tr from-cyan-600 to-emerald-400 border-2 border-[#0e0e18] flex items-center justify-center text-[10px] font-bold text-white">DV</span>
+                                        <span class="w-7 h-7 rounded-full bg-slate-800 border-2 border-[#0e0e18] flex items-center justify-center text-[10px] font-mono text-cyan-300">+2k</span>
+                                    </div>
+                                    <span>
+                                        Únete a <strong id="vip-counter" class="text-white font-mono">2,847</strong> creadores e ingenieros en la fila VIP
+                                    </span>
+                                </div>
+                                <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-cyan-400"></i> Cero spam. Cancelación en 1 clic.
+                                </span>
+                            </div>
+                        </form>
+
+                        <div id="vip-ticket-view" class="hidden relative z-10 text-left space-y-5">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-display font-bold text-lg text-white">¡Acceso VIP Reservado con Éxito!</h3>
+                                        <p class="text-xs text-slate-400">Guarda tu pase de miembro fundador para el lanzamiento.</p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-mono bg-violet-500/20 border border-violet-400/40 text-violet-200">
+                                    Puesto #<span id="ticket-position">2848</span>
+                                </span>
+                            </div>
+
+                            <!-- Tarjeta del Ticket Holográfico -->
+                            <div class="p-5 rounded-2xl bg-gradient-to-r from-[#131129] via-[#0f1b2d] to-[#1f1126] border border-cyan-400/40 shadow-[0_0_30px_rgba(6,182,212,0.2)] relative overflow-hidden">
+                                <div class="absolute -right-10 -bottom-10 w-36 h-36 bg-cyan-400/10 rounded-full blur-2xl pointer-events-none"></div>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div class="space-y-1">
+                                        <span class="text-[10px] font-mono uppercase tracking-widest text-cyan-400 block">PASE OFICIAL • FOUNDER EDITION</span>
+                                        <div class="font-display font-bold text-xl text-white flex items-center gap-2">
+                                            <span>PromptMax Studio v1.0</span>
+                                        </div>
+                                        <p class="text-xs text-slate-300">
+                                            Usuario: <span id="ticket-email" class="font-mono text-white">creador@ia.com</span>
+                                        </p>
+                                        <p class="text-xs text-slate-400">
+                                            Especialidad: <span id="ticket-interest" class="text-violet-300 font-medium">Imágenes & Arte IA</span>
+                                        </p>
+                                    </div>
+
+                                    <!-- Código VIP Copiable -->
+                                    <div class="bg-[#07070c]/90 p-3.5 rounded-xl border border-white/15 text-center sm:min-w-[180px]">
+                                        <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-1">TU CÓDIGO FUNDADOR</span>
+                                        <div id="ticket-code" class="font-mono font-bold text-lg text-cyan-300 tracking-wider mb-2">PMX-VIP-8942</div>
+                                        <button type="button" onclick="copyFounderCode()" id="copy-ticket-btn" class="w-full py-1.5 px-3 rounded-lg bg-white/10 hover:bg-white/15 text-xs font-medium text-white flex items-center justify-center gap-1.5 transition-colors">
+                                            <i data-lucide="copy" class="w-3.5 h-3.5 text-cyan-400"></i>
+                                            <span>Copiar Código</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+                                <span>🎉 Hemos actualizado el contador oficial en tiempo real.</span>
+                                <button type="button" onclick="resetWaitlistForm()" class="text-cyan-400 hover:text-cyan-300 underline underline-offset-4">
+                                    Registrar otro correo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="demo-section" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto reveal">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-mono uppercase tracking-widest mb-4">
+                    <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+                    MOTOR NEURONAL INTERACTIVO
+                </span>
+                <h2 class="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight mb-4">
+                    Mira la magia de <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-violet-400 to-pink-400">PromptMax</span> en acción
+                </h2>
+                <p class="text-slate-400 text-sm sm:text-base">
+                    Selecciona una categoría o escribe tu propia idea básica y observa cómo nuestro motor la transforma en un <span class="text-slate-200 font-medium">Super Prompt estructurado</span> listo para copiar.
+                </p>
+            </div>
+
+            <!-- Pestañas de Categorías (4 Tabs) -->
+            <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-8" role="tablist">
+                <button onclick="switchDemoTab('arte')" id="tab-arte" class="demo-tab px-4 sm:px-6 py-3 rounded-2xl font-display font-semibold text-xs sm:text-sm flex items-center gap-2.5 transition-all bg-gradient-to-r from-violet-600 to-cyan-600 text-white shadow-lg shadow-violet-600/30 border border-white/20">
+                    <i data-lucide="palette" class="w-4 h-4"></i>
+                    <span>Arte & Imagen</span>
+                </button>
+                <button onclick="switchDemoTab('video')" id="tab-video" class="demo-tab px-4 sm:px-6 py-3 rounded-2xl font-display font-semibold text-xs sm:text-sm flex items-center gap-2.5 transition-all bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10">
+                    <i data-lucide="clapperboard" class="w-4 h-4 text-cyan-400"></i>
+                    <span>Video & Motion</span>
+                </button>
+                <button onclick="switchDemoTab('musica')" id="tab-musica" class="demo-tab px-4 sm:px-6 py-3 rounded-2xl font-display font-semibold text-xs sm:text-sm flex items-center gap-2.5 transition-all bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10">
+                    <i data-lucide="headphones" class="w-4 h-4 text-pink-400"></i>
+                    <span>Música & Metatags</span>
+                </button>
+                <button onclick="switchDemoTab('codigo')" id="tab-codigo" class="demo-tab px-4 sm:px-6 py-3 rounded-2xl font-display font-semibold text-xs sm:text-sm flex items-center gap-2.5 transition-all bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10">
+                    <i data-lucide="code-2" class="w-4 h-4 text-emerald-400"></i>
+                    <span>Desarrollo & Texto</span>
+                </button>
+            </div>
+
+            <!-- Panel del Simulador -->
+            <div class="glass-card rounded-3xl p-5 sm:p-8 border border-white/15 shadow-2xl">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+                    
+                    <!-- Columna Izquierda: Idea Básica (Input + Presets) -->
+                    <div class="lg:col-span-5 flex flex-col justify-between bg-[#07070c]/80 rounded-2xl p-5 sm:p-6 border border-white/10">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                                    ENTRADA • IDEA SIMPLE
+                                </span>
+                                <span id="demo-target-engine" class="text-[11px] font-mono px-2.5 py-0.5 rounded-md bg-white/5 text-slate-300 border border-white/10">
+                                    Midjourney v6.1 / Flux.1
+                                </span>
+                            </div>
+
+                            <!-- Campo editable para la idea simple -->
+                            <label for="basic-prompt-input" class="sr-only">Escribe tu idea simple</label>
+                            <textarea 
+                                id="basic-prompt-input" 
+                                rows="3"
+                                class="w-full rounded-xl bg-[#0e0e1a] border border-white/15 focus:border-violet-400 p-4 text-white font-sans text-base sm:text-lg focus:outline-none transition-colors resize-none mb-4"
+                                placeholder="Escribe una idea breve..."
+                            >Ciudad futurista bajo la lluvia de noche</textarea>
+
+                            <!-- Ideas rápidas sugeridas -->
+                            <div class="mb-6">
+                                <span class="text-[11px] font-mono text-slate-400 block mb-2">Ideas de prueba rápidas (clic para cargar):</span>
+                                <div id="preset-chips" class="flex flex-wrap gap-2">
+                                    <!-- Se inyectan dinámicamente según la pestaña -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Métricas de comparación antes de optimizar -->
+                        <div class="space-y-4 pt-4 border-t border-white/10">
+                            <div class="grid grid-cols-2 gap-3 text-xs">
+                                <div class="p-3 rounded-xl bg-white/[0.03] border border-white/5">
+                                    <span class="text-slate-500 block">Calidad del Prompt Base</span>
+                                    <span class="font-mono font-semibold text-amber-400">Baja (Sin contexto técnico)</span>
+                                </div>
+                                <div class="p-3 rounded-xl bg-violet-500/10 border border-violet-500/20">
+                                    <span class="text-slate-400 block">Potencia con PromptMax</span>
+                                    <span class="font-mono font-semibold text-cyan-300">+480% Precisión IA</span>
+                                </div>
+                            </div>
+
+                            <button 
+                                type="button" 
+                                onclick="triggerPromptEnhancement()" 
+                                id="enhance-btn"
+                                class="w-full btn-neon py-3.5 px-6 rounded-xl font-display font-bold text-sm sm:text-base text-white flex items-center justify-center gap-2.5 cursor-pointer"
+                            >
+                                <i data-lucide="wand-sparkles" class="w-5 h-5"></i>
+                                <span>Mejorar Prompt con PromptMax</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Salida Super Prompt Estructurado -->
+                    <div class="lg:col-span-7 flex flex-col justify-between bg-gradient-to-br from-[#0c0a1d] via-[#09111e] to-[#120b1d] rounded-2xl p-5 sm:p-6 border border-cyan-500/30 relative overflow-hidden">
+                        
+                        <!-- Cabecera de la consola de salida -->
+                        <div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-4 pb-3 border-b border-white/10">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                                    <span class="text-xs font-mono uppercase tracking-wider text-cyan-300 font-semibold">
+                                        SALIDA • SUPER PROMPT ESTRUCTURADO
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span id="status-pill" class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                                        ✓ Optimizado al 99.4%
+                                    </span>
+                                    <button 
+                                        type="button" 
+                                        onclick="copySuperPrompt()" 
+                                        id="copy-prompt-btn"
+                                        class="px-3.5 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-medium text-white flex items-center gap-1.5 transition-all"
+                                    >
+                                        <i data-lucide="copy" class="w-3.5 h-3.5 text-cyan-400"></i>
+                                        <span>Copiar Prompt</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Estado de carga neuronal durante la transformación -->
+                            <div id="neural-loader" class="hidden py-12 flex flex-col items-center justify-center text-center space-y-3">
+                                <div class="w-12 h-12 rounded-2xl bg-violet-500/20 border border-cyan-400/50 flex items-center justify-center animate-spin">
+                                    <i data-lucide="sparkles" class="w-6 h-6 text-cyan-300"></i>
+                                </div>
+                                <p id="neural-step-text" class="font-mono text-xs sm:text-sm text-cyan-300">
+                                    Inyectando descriptores cinemáticos, iluminación y pesos semánticos...
+                                </p>
+                            </div>
+
+                            <!-- Contenido del Super Prompt con etiquetas resaltadas -->
+                            <div id="super-prompt-output" class="font-mono text-xs sm:text-sm leading-relaxed text-slate-200 bg-[#050509]/85 p-4 sm:p-5 rounded-xl border border-white/10 min-h-[190px] whitespace-pre-wrap"></div>
+                        </div>
+
+                        <!-- Capas aplicadas en la estructuración -->
+                        <div class="mt-5 pt-4 border-t border-white/10">
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <div class="flex flex-wrap items-center gap-2 text-[11px] font-mono">
+                                    <span class="text-slate-400">Capas inyectadas:</span>
+                                    <span class="token-tag">Sujeto & Contexto</span>
+                                    <span class="token-style">Estética & Iluminación</span>
+                                    <span class="token-param">Parámetros & Metatags</span>
+                                </div>
+                                <span id="token-count-badge" class="text-[11px] font-mono text-slate-400">
+                                    Tokens: <strong class="text-white">94</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="bento-section" class="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto reveal">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-300 text-xs font-mono uppercase tracking-widest mb-4">
+                    <i data-lucide="boxes" class="w-3.5 h-3.5"></i>
+                    ARQUITECTURA DE PRÓXIMA GENERACIÓN
+                </span>
+                <h2 class="font-display font-bold text-3xl sm:text-5xl text-white tracking-tight mb-4">
+                    Todo el arsenal que incluirá <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">PromptMax</span>
+                </h2>
+                <p class="text-slate-400 text-sm sm:text-base">
+                    Diseñado para creadores visuales, cineastas IA, productores musicales e ingenieros de software que exigen resultados consistentes al primer intento.
+                </p>
+            </div>
+
+            <!-- Bento Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                
+                <!-- Card 1: Optimizador Inteligente (Span 7) -->
+                <div class="md:col-span-7 glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between group">
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-violet-500/20 border border-violet-500/40 flex items-center justify-center text-violet-300 mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="sparkles" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-2xl text-white mb-2">
+                            Optimizador Inteligente Multi-Capa
+                        </h3>
+                        <p class="text-slate-400 text-sm sm:text-base leading-relaxed mb-6">
+                            Convierte ideas simples de 4 palabras en instrucciones maestras con jerarquía semántica, control de pesos <code class="text-cyan-300 font-mono">(::1.5)</code>, prompts negativos automáticos y adaptación de tono.
+                        </p>
+                    </div>
+
+                    <!-- Mini UI interactiva dentro de la tarjeta -->
+                    <div class="relative z-10 bg-[#07070c]/90 rounded-2xl p-4 border border-white/10 space-y-3">
+                        <div class="flex items-center justify-between text-xs font-mono">
+                            <span class="text-slate-400">Nivel de Detalle Semántico</span>
+                            <span id="detail-level-label" class="text-cyan-300 font-semibold">Ultra Cinematográfico (95%)</span>
+                        </div>
+                        <input 
+                            type="range" 
+                            min="20" 
+                            max="100" 
+                            value="95" 
+                            oninput="updateBentoSlider(this.value)"
+                            class="w-full accent-cyan-400 bg-slate-800 h-1.5 rounded-lg cursor-pointer"
+                            aria-label="Nivel de Detalle Semántico"
+                        >
+                        <div class="flex flex-wrap gap-1.5 pt-1">
+                            <span class="px-2.5 py-1 rounded-md bg-violet-500/15 border border-violet-500/30 text-[11px] font-mono text-violet-300">+ Composición Áurea</span>
+                            <span class="px-2.5 py-1 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-[11px] font-mono text-cyan-300">+ Iluminación Volumétrica</span>
+                            <span class="px-2.5 py-1 rounded-md bg-pink-500/15 border border-pink-500/30 text-[11px] font-mono text-pink-300">+ Anti-Alucinación</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Generador de Metatags y Parámetros (Span 5) -->
+                <div class="md:col-span-5 glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between group">
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-300 mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="sliders-horizontal" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-2xl text-white mb-2">
+                            Generador de Metatags y Parámetros
+                        </h3>
+                        <p class="text-slate-400 text-sm sm:text-base leading-relaxed mb-6">
+                            Control total de lentes de cámara, movimientos cinematográficos, estructuras de canciones <code class="text-pink-300 font-mono">[Drop]</code> y banderas técnicas sin memorizar comandos.
+                        </p>
+                    </div>
+
+                    <!-- Mini Selector de Metatags Interactivo -->
+                    <div class="relative z-10 bg-[#07070c]/90 rounded-2xl p-4 border border-white/10">
+                        <span class="text-[11px] font-mono text-slate-400 block mb-2.5">Haz clic para probar inyección de tags:</span>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="toggleBentoTag(this)" class="px-2.5 py-1 rounded-lg text-xs font-mono border border-cyan-400 bg-cyan-500/20 text-cyan-200 transition-all">--ar 16:9</button>
+                            <button type="button" onclick="toggleBentoTag(this)" class="px-2.5 py-1 rounded-lg text-xs font-mono border border-violet-400 bg-violet-500/20 text-violet-200 transition-all">35mm Anamorphic</button>
+                            <button type="button" onclick="toggleBentoTag(this)" class="px-2.5 py-1 rounded-lg text-xs font-mono border border-white/15 bg-white/5 text-slate-400 transition-all">[Synth Solo]</button>
+                            <button type="button" onclick="toggleBentoTag(this)" class="px-2.5 py-1 rounded-lg text-xs font-mono border border-pink-400 bg-pink-500/20 text-pink-200 transition-all">--stylize 750</button>
+                            <button type="button" onclick="toggleBentoTag(this)" class="px-2.5 py-1 rounded-lg text-xs font-mono border border-white/15 bg-white/5 text-slate-400 transition-all">FPV Drone Shot</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Biblioteca & Plantillas Pro (Span 5) -->
+                <div class="md:col-span-5 glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between group">
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-300 mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="book-marked" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-2xl text-white mb-2">
+                            Biblioteca & Plantillas Pro
+                        </h3>
+                        <p class="text-slate-400 text-sm sm:text-base leading-relaxed mb-6">
+                            Colección curada de +2,500 prompts probados y listos para usar con variables dinámicas personalizables en un clic.
+                        </p>
+                    </div>
+
+                    <div class="relative z-10 space-y-2.5 bg-[#07070c]/90 rounded-2xl p-4 border border-white/10 font-mono text-xs">
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-slate-200">🎬 Trailer Sci-Fi IMAX</span>
+                            <span class="text-emerald-400 text-[11px]">99.8% Éxito</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-slate-200">🎵 Synthwave Cyberpunk Hit</span>
+                            <span class="text-cyan-400 text-[11px]">Metatags v4</span>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-slate-200">💻 Arquitecto Full-Stack Senior</span>
+                            <span class="text-violet-400 text-[11px]">Chain-of-Thought</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Ecosistema Multi-IA (Span 7) -->
+                <div class="md:col-span-7 glass-card rounded-3xl p-6 sm:p-8 flex flex-col justify-between group">
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-300 mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="network" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-display font-bold text-2xl text-white mb-2">
+                            Ecosistema Multi-IA Unificado
+                        </h3>
+                        <p class="text-slate-400 text-sm sm:text-base leading-relaxed mb-6">
+                            Traduce y adapta automáticamente la sintaxis de tu prompt según el motor de destino: desde difusión de imagen hasta modelos de razonamiento profundo.
+                        </p>
+                    </div>
+
+                    <!-- Grid de Motores Compatibles -->
+                    <div class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        <div class="p-3 rounded-xl bg-[#07070c]/90 border border-white/10 hover:border-violet-400/50 transition-colors text-center">
+                            <div class="text-xs font-display font-bold text-white">Midjourney & Flux</div>
+                            <div class="text-[10px] font-mono text-violet-400 mt-0.5">Arte Fotorealista</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-[#07070c]/90 border border-white/10 hover:border-cyan-400/50 transition-colors text-center">
+                            <div class="text-xs font-display font-bold text-white">Sora & Runway</div>
+                            <div class="text-[10px] font-mono text-cyan-400 mt-0.5">Dirección de Video</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-[#07070c]/90 border border-white/10 hover:border-pink-400/50 transition-colors text-center">
+                            <div class="text-xs font-display font-bold text-white">Suno & Udio</div>
+                            <div class="text-[10px] font-mono text-pink-400 mt-0.5">Producción Musical</div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-[#07070c]/90 border border-white/10 hover:border-emerald-400/50 transition-colors text-center">
+                            <div class="text-xs font-display font-bold text-white">GPT / Claude / Gemini</div>
+                            <div class="text-[10px] font-mono text-emerald-400 mt-0.5">Código & Agentes</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="roadmap-section" class="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto reveal">
+            <div class="glass-card rounded-3xl p-6 sm:p-10 border border-cyan-500/25">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <span class="text-xs font-mono uppercase tracking-widest text-cyan-400 block mb-1">
+                            TELEMETRÍA DE DESARROLLO EN VIVO
+                        </span>
+                        <h3 class="font-display font-bold text-2xl sm:text-3xl text-white">
+                            Estado del Proyecto: <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400">Fase Beta • 88% Completado</span>
+                        </h3>
+                    </div>
+                    <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 font-mono text-xs self-start sm:self-center">
+                        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                        Sprint Final pre-lanzamiento
+                    </span>
+                </div>
+
+                <!-- Barra de progreso animada -->
+                <div class="w-full h-4 bg-[#07070c] rounded-full p-0.5 border border-white/10 mb-8 overflow-hidden">
+                    <div class="h-full rounded-full bg-gradient-to-r from-violet-600 via-cyan-400 to-pink-500 animate-gradient-x relative" style="width: 88%;">
+                        <div class="absolute right-0 top-0 bottom-0 w-6 bg-white/40 blur-sm"></div>
+                    </div>
+                </div>
+
+                <!-- 4 Etapas Marcadas -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Etapa 1 -->
+                    <div class="p-4 rounded-2xl bg-[#07070c]/80 border border-emerald-500/30">
+                        <div class="flex items-center justify-between text-xs font-mono text-emerald-400 mb-1">
+                            <span>ETAPA 01</span>
+                            <span>✓ 100%</span>
+                        </div>
+                        <div class="font-display font-bold text-white text-sm mb-1">Arquitectura Core</div>
+                        <p class="text-xs text-slate-400">Infraestructura de baja latencia y esquemas semánticos.</p>
+                    </div>
+                    <!-- Etapa 2 -->
+                    <div class="p-4 rounded-2xl bg-[#07070c]/80 border border-emerald-500/30">
+                        <div class="flex items-center justify-between text-xs font-mono text-emerald-400 mb-1">
+                            <span>ETAPA 02</span>
+                            <span>✓ 100%</span>
+                        </div>
+                        <div class="font-display font-bold text-white text-sm mb-1">Motor de Prompts</div>
+                        <p class="text-xs text-slate-400">Entrenamiento de matrices para imagen, video, audio y código.</p>
+                    </div>
+                    <!-- Etapa 3 -->
+                    <div class="p-4 rounded-2xl bg-violet-950/25 border border-cyan-400/50 shadow-[0_0_20px_rgba(6,182,212,0.15)]">
+                        <div class="flex items-center justify-between text-xs font-mono text-cyan-300 mb-1">
+                            <span>ETAPA 03 (ACTUAL)</span>
+                            <span class="animate-pulse">● 88%</span>
+                        </div>
+                        <div class="font-display font-bold text-white text-sm mb-1">Interfaz Studio UI</div>
+                        <p class="text-xs text-slate-300">Pruebas de estrés con beta testers y pulido de micro-herramientas.</p>
+                    </div>
+                    <!-- Etapa 4 -->
+                    <div class="p-4 rounded-2xl bg-[#07070c]/60 border border-white/10">
+                        <div class="flex items-center justify-between text-xs font-mono text-pink-400 mb-1">
+                            <span>ETAPA 04</span>
+                            <span>PRONTO</span>
+                        </div>
+                        <div class="font-display font-bold text-white text-sm mb-1">Lanzamiento Público</div>
+                        <p class="text-xs text-slate-400">Apertura prioritaria para miembros de la Lista VIP.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="relative z-10 border-t border-white/10 bg-[#050509]/90 backdrop-blur-lg py-12 px-4 sm:px-6 lg:px-8 mt-12">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center text-white shadow-md">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <span class="font-display font-bold text-lg text-white">
+                        Prompt<span class="text-cyan-400">Max</span>
+                    </span>
+                    <p class="text-xs text-slate-500">© 2026 PromptMax AI Labs. Todos los derechos reservados.</p>
+                </div>
+            </div>
+
+            <!-- Enlaces Sociales -->
+            <div class="flex items-center gap-3">
+                <a href="#waitlist-box" onclick="scrollToWaitlist()" class="p-2.5 rounded-xl bg-white/5 hover:bg-violet-500/20 border border-white/10 hover:border-violet-400/40 text-slate-400 hover:text-white transition-all" aria-label="Comunidad X / Twitter">
+                    <i data-lucide="twitter" class="w-4 h-4"></i>
+                </a>
+                <a href="#waitlist-box" onclick="scrollToWaitlist()" class="p-2.5 rounded-xl bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-400/40 text-slate-400 hover:text-white transition-all" aria-label="Discord Oficial">
+                    <i data-lucide="message-square-code" class="w-4 h-4"></i>
+                </a>
+                <a href="#waitlist-box" onclick="scrollToWaitlist()" class="p-2.5 rounded-xl bg-white/5 hover:bg-pink-500/20 border border-white/10 hover:border-pink-400/40 text-slate-400 hover:text-white transition-all" aria-label="Repositorio GitHub">
+                    <i data-lucide="github" class="w-4 h-4"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notificación Toast Flotante (Sin usar alert()) -->
+    <div id="toast-notification" class="fixed bottom-6 right-6 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300">
+        <div class="glass-card px-4 py-3 rounded-2xl border border-cyan-400/50 shadow-2xl flex items-center gap-3 bg-[#0c0c18]/95">
+            <div class="w-7 h-7 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-300">
+                <i data-lucide="check" class="w-4 h-4"></i>
+            </div>
+            <span id="toast-message" class="text-xs sm:text-sm font-medium text-white">Copiado al portapapeles</span>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        let selectedInterest = 'Imágenes & Arte IA';
+        let vipCount = 2847;
+        let currentCategory = 'arte';
+        let currentRawSuperPrompt = '';
+
+        const demoDatabase = {
+            arte: {
+                engine: 'Midjourney v6.1 / Flux.1 Pro',
+                defaultIdea: 'Ciudad futurista bajo la lluvia de noche',
+                presets: [
+                    'Ciudad futurista bajo la lluvia de noche',
+                    'Samurái cibernético en templo de neón',
+                    'Astronauta descubriendo un jardín bioluminiscente'
+                ],
+                buildPrompt: (idea) => {
+                    const cleanIdea = idea.trim() || 'Ciudad futurista bajo la lluvia de noche';
+                    currentRawSuperPrompt = `/imagine prompt: [SUBJECT]: Ultra-detailed cinematic wide shot of ${cleanIdea}, intricate architectural megastructures with holographic kanji billboards ::1.4 [LIGHTING]: Volumetric bioluminescent cyan and electric violet neon reflections on wet asphalt, dramatic rim lighting, ray-traced global illumination ::1.2 [CAMERA]: Shot on ARRI Alexa 65, Panavision Anamorphic 35mm lens, f/1.8 aperture, shallow depth of field, hyper-realistic textures, 8k UHD --ar 16:9 --stylize 750 --v 6.1 --no blurry, lowres, watermark`;
+                    return `<span class="token-tag">[SUBJECT]</span>: Ultra-detailed cinematic wide shot of <strong class="text-white underline decoration-cyan-400/60 underline-offset-4">${escapeHtml(cleanIdea)}</strong>, intricate megastructures &amp; micro-textures <span class="token-param">::1.4</span>\n\n<span class="token-style">[LIGHTING &amp; ATMOSPHERE]</span>: Volumetric electric violet (#8b5cf6) and neon cyan (#06b6d4) reflections, moody atmospheric fog, ray-traced global illumination <span class="token-param">::1.2</span>\n\n<span class="token-tag">[CAMERA &amp; OPTICS]</span>: Shot on ARRI Alexa 65, Panavision Anamorphic 35mm lens, f/1.8, photorealistic octane render, 8k UHD\n\n<span class="token-param">--ar 16:9</span> <span class="token-param">--stylize 750</span> <span class="token-param">--v 6.1</span> <span class="token-style">--no blurry, deformed, watermark</span>`;
+                }
+            },
+            video: {
+                engine: 'OpenAI Sora / Runway Gen-3 Alpha',
+                defaultIdea: 'Auto deportivo cruzando un cañón desértico al atardecer',
+                presets: [
+                    'Auto deportivo cruzando un cañón desértico al atardecer',
+                    'Dron FPV atravesando una estación espacial orbital',
+                    'Ola gigante bioluminiscente rompiendo en cámara lenta'
+                ],
+                buildPrompt: (idea) => {
+                    const cleanIdea = idea.trim() || 'Auto deportivo cruzando un cañón desértico al atardecer';
+                    currentRawSuperPrompt = `[CAMERA MOTION]: Dynamic FPV drone tracking shot moving at high speed, smooth gimbal stabilization, subtle camera roll on turns. [SCENE & ACTION]: ${cleanIdea}, kinetic dust particles suspended in the air, physically accurate fluid & cloth dynamics. [CINEMATOGRAPHY]: Golden hour anamorphic lens flare, high contrast teal and magenta color grading, 60fps fluid motion, IMAX 70mm film grain. [PARAMETERS]: --motion 8 --camera_control pan_right_zoom_in --fps 60`;
+                    return `<span class="token-tag">[CAMERA MOTION]</span>: Dynamic FPV drone tracking shot following the subject at high velocity, smooth gimbal stabilization\n\n<span class="token-style">[SCENE &amp; PHYSICS]</span>: <strong class="text-white underline decoration-cyan-400/60 underline-offset-4">${escapeHtml(cleanIdea)}</strong>, physically accurate particle dispersion, realistic motion blur &amp; temporal consistency\n\n<span class="token-tag">[COLOR &amp; OPTICS]</span>: Anamorphic lens flare, IMAX 70mm film look, high-dynamic-range twilight grading\n\n<span class="token-param">--motion_scale 8.5</span> <span class="token-param">--fps 60</span> <span class="token-param">--consistency high</span>`;
+                }
+            },
+            musica: {
+                engine: 'Suno v4 / Udio Studio Pro',
+                defaultIdea: 'Canción synthwave energética para programar de noche',
+                presets: [
+                    'Canción synthwave energética para programar de noche',
+                    'Épica orquestal ciberpunk con coros y bajos pesados',
+                    'Lo-Fi espacial relajante con saxofón y lluvia suave'
+                ],
+                buildPrompt: (idea) => {
+                    const cleanIdea = idea.trim() || 'Canción synthwave energética para programar de noche';
+                    currentRawSuperPrompt = `[Style: Dark Synthwave, Cyberpunk Outrun, French Electro, 124 BPM, Key: F Minor]\n[Instruments: Analog Roland Juno-106 Arpeggiators, Punchy Gated Reverb Snare, Sub-Bass Moog, Atmospheric Vocal Chops]\n[Theme]: ${cleanIdea}\n\n[Intro - Ambient Space Pad & Rising ArpFilter]\n[Build-Up - Snare Roll & Tension Risers]\n[Drop - High-Energy Cybernetic Bassline + Lead Synth Hook]\n[Bridge - Half-Time Melodic Vocoder Solo]\n[Outro - Tape Slowdown & Neon Fade]`;
+                    return `<span class="token-param">[Style: Dark Synthwave, Cyberpunk Outrun, 124 BPM, Key: F Minor]</span>\n<span class="token-style">[Instrumentation: Analog Juno-106 Arps, Gated Reverb Drums, Deep Moog Sub-Bass]</span>\n<span class="token-tag">[Core Concept]</span>: <strong class="text-white underline decoration-pink-400/60 underline-offset-4">${escapeHtml(cleanIdea)}</strong>\n\n<span class="token-param">[Intro]</span> Atmospheric vinyl crackle + warm filtered synth riser\n<span class="token-param">[Build-Up]</span> Accelerating analog snare roll + high-resonance sweep\n<span class="token-style">[Main Drop]</span> Explosive side-chained bassline + soaring neon lead melody\n<span class="token-param">[Outro]</span> Reverb tail decay &amp; tape stop effect`;
+                }
+            },
+            codigo: {
+                engine: 'Claude 3.7 Sonnet / GPT-4o / Cursor Agent',
+                defaultIdea: 'API REST de pagos en tiempo real con autenticación segura',
+                presets: [
+                    'API REST de pagos en tiempo real con autenticación segura',
+                    'Dashboard financiero en React con gráficos interactivos',
+                    'Microservicio en Python para análisis de datos con IA'
+                ],
+                buildPrompt: (idea) => {
+                    const cleanIdea = idea.trim() || 'API REST de pagos en tiempo real con autenticación segura';
+                    currentRawSuperPrompt = `<system_role>Actúa como un Principal Software Architect & Security Engineer con 15+ años en sistemas distribuidos de alta disponibilidad.</system_role>\n<objective>Diseña e implementa: ${cleanIdea}</objective>\n<constraints>\n1. Utiliza Clean Architecture, tipado estricto (TypeScript/Zod) y manejo robusto de errores.\n2. Implementa Rate Limiting, JWT con rotación de Refresh Tokens e idempotencia en transacciones.\n3. Incluye pruebas unitarias críticas y documentación OpenAPI/Swagger.\n</constraints>\n<output_format>Razona paso a paso (Chain-of-Thought) sobre los vectores de seguridad antes de generar código modular listo para producción.</output_format>`;
+                    return `<span class="token-tag">&lt;system_role&gt;</span>Actúa como Principal Software Architect &amp; Staff Security Engineer.<span class="token-tag">&lt;/system_role&gt;</span>\n\n<span class="token-style">&lt;objective&gt;</span>Desarrolla de forma modular: <strong class="text-white underline decoration-emerald-400/60 underline-offset-4">${escapeHtml(cleanIdea)}</strong><span class="token-style">&lt;/objective&gt;</span>\n\n<span class="token-param">&lt;architecture_constraints&gt;</span>\n• Patrón Clean Architecture + validación de esquemas estricta\n• Idempotencia, Rate-Limiting y manejo explícito de excepciones\n• Complejidad algorítmica óptima O(n log n) o superior\n<span class="token-param">&lt;/architecture_constraints&gt;</span>\n\n<span class="token-tag">&lt;reasoning_mode&gt;</span>Aplica Chain-of-Thought antes de emitir el bloque final.<span class="token-tag">&lt;/reasoning_mode&gt;</span>`;
+                }
+            }
+        };
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[m];
+            });
+        }
+
+        function switchDemoTab(category) {
+            currentCategory = category;
+            const data = demoDatabase[category];
+
+            // Actualizar estilos de botones de pestaña
+            document.querySelectorAll('.demo-tab').forEach(btn => {
+                btn.className = 'demo-tab px-4 sm:px-6 py-3 rounded-2xl font-display font-semibold text-xs sm:text-sm flex items-center gap-2.5 transition-all bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10';
+            });
+            const activeTab = document.getElementById(`tab-${category}`);
+            if (activeTab) {
+                activeTab.className = 'demo-tab px-4 sm:px-6 py-3 rounded-2xl font-display font-semibold text-xs sm:text-sm flex items-center gap-2.5 transition-all bg-gradient-to-r from-violet-600 to-cyan-600 text-white shadow-lg shadow-violet-600/30 border border-white/20 scale-105';
+            }
+
+            // Actualizar motor e idea por defecto
+            document.getElementById('demo-target-engine').textContent = data.engine;
+            const inputEl = document.getElementById('basic-prompt-input');
+            inputEl.value = data.defaultIdea;
+
+            // Renderizar chips de presets
+            const presetContainer = document.getElementById('preset-chips');
+            presetContainer.innerHTML = '';
+            data.presets.forEach(preset => {
+                const chip = document.createElement('button');
+                chip.type = 'button';
+                chip.className = 'text-left text-[11px] px-3 py-1.5 rounded-lg bg-white/5 hover:bg-violet-500/20 border border-white/10 hover:border-violet-400/40 text-slate-300 hover:text-white transition-all';
+                chip.textContent = preset;
+                chip.onclick = () => {
+                    inputEl.value = preset;
+                    triggerPromptEnhancement();
+                };
+                presetContainer.appendChild(chip);
+            });
+
+            triggerPromptEnhancement();
+        }
+
+        function triggerPromptEnhancement() {
+            const inputIdea = document.getElementById('basic-prompt-input').value;
+            const outputBox = document.getElementById('super-prompt-output');
+            const loader = document.getElementById('neural-loader');
+            const statusPill = document.getElementById('status-pill');
+
+            outputBox.classList.add('hidden');
+            loader.classList.remove('hidden');
+            statusPill.textContent = '⚡ Procesando red semántica...';
+            statusPill.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 animate-pulse';
+
+            setTimeout(() => {
+                const formattedHtml = demoDatabase[currentCategory].buildPrompt(inputIdea);
+                loader.classList.add('hidden');
+                outputBox.classList.remove('hidden');
+                outputBox.innerHTML = formattedHtml;
+
+                const tokenEstimate = Math.max(68, Math.round(currentRawSuperPrompt.split(/\s+/).length * 1.35));
+                document.getElementById('token-count-badge').innerHTML = `Tokens optimizados: <strong class="text-cyan-300">${tokenEstimate}</strong>`;
+
+                statusPill.textContent = '✓ Super Prompt Listo';
+                statusPill.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
+            }, 380);
+        }
+
+        function copyTextFallback(text, successMessage) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMessage);
+            } catch (err) {
+                showToast('Listo para copiar manualmente');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function copySuperPrompt() {
+            copyTextFallback(currentRawSuperPrompt, '¡Super Prompt copiado al portapapeles!');
+        }
+
+        function copyFounderCode() {
+            const code = document.getElementById('ticket-code').textContent;
+            copyTextFallback(code, `Código ${code} copiado al portapapeles`);
+        }
+
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast-notification');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                toast.classList.remove('opacity-100', 'translate-y-0');
+            }, 3200);
+        }
+
+        function selectInterest(buttonEl, interestName) {
+            selectedInterest = interestName;
+            document.querySelectorAll('.interest-btn').forEach(btn => {
+                btn.className = 'interest-btn flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-medium border transition-all bg-white/5 border-white/10 text-slate-300 hover:bg-white/10';
+            });
+            buttonEl.className = 'interest-btn active-interest flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-medium border transition-all bg-violet-600/25 border-violet-400 text-white shadow-sm';
+        }
+
+        function scrollToWaitlist() {
+            const box = document.getElementById('waitlist-box');
+            box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                const emailInput = document.getElementById('vip-email');
+                if (emailInput && !emailInput.closest('form').classList.contains('hidden')) {
+                    emailInput.focus();
+                }
+            }, 600);
+        }
+
+        function handleWaitlistSubmit(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('vip-email');
+            const errorMsg = document.getElementById('email-error');
+            const emailValue = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(emailValue)) {
+                errorMsg.classList.remove('hidden');
+                emailInput.classList.add('border-rose-500');
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            emailInput.classList.remove('border-rose-500');
+
+            // Incrementar contador VIP en vivo
+            vipCount += 1;
+            document.getElementById('vip-counter').textContent = vipCount.toLocaleString('en-US');
+
+            // Generar código fundador único
+            const randomHex = Math.floor(1000 + Math.random() * 9000);
+            const founderCode = `PMX-VIP-${randomHex}`;
+
+            document.getElementById('ticket-email').textContent = emailValue;
+            document.getElementById('ticket-interest').textContent = selectedInterest;
+            document.getElementById('ticket-code').textContent = founderCode;
+            document.getElementById('ticket-position').textContent = vipCount;
+
+            // Mostrar Ticket y ocultar formulario
+            document.getElementById('waitlist-form').classList.add('hidden');
+            document.getElementById('vip-ticket-view').classList.remove('hidden');
+
+            // Lanzar confeti festivo en pantalla
+            launchConfetti();
+            showToast('🎉 ¡Bienvenido a la Lista VIP de PromptMax!');
+        }
+
+        function resetWaitlistForm() {
+            document.getElementById('vip-email').value = '';
+            document.getElementById('vip-ticket-view').classList.add('hidden');
+            document.getElementById('waitlist-form').classList.remove('hidden');
+        }
+
+        function updateBentoSlider(val) {
+            const label = document.getElementById('detail-level-label');
+            if (val < 45) {
+                label.textContent = `Conciso & Directo (${val}%)`;
+            } else if (val < 80) {
+                label.textContent = `Profesional Balanceado (${val}%)`;
+            } else {
+                label.textContent = `Ultra Cinematográfico (${val}%)`;
+            }
+        }
+
+        function toggleBentoTag(btn) {
+            const isSelected = btn.classList.contains('border-cyan-400') || btn.classList.contains('border-violet-400') || btn.classList.contains('border-pink-400');
+            if (isSelected) {
+                btn.className = 'px-2.5 py-1 rounded-lg text-xs font-mono border border-white/15 bg-white/5 text-slate-400 transition-all';
+            } else {
+                btn.className = 'px-2.5 py-1 rounded-lg text-xs font-mono border border-cyan-400 bg-cyan-500/20 text-cyan-200 transition-all scale-105';
+            }
+        }
+
+        // Countdown en tiempo real (14 días, 8 horas, 42 minutos desde el inicio de sesión)
+        const targetLaunchDate = new Date(Date.now() + (14 * 86400000) + (8 * 3600000) + (42 * 60000) + 19000);
+        function updateCountdown() {
+            const now = new Date();
+            const diff = Math.max(0, targetLaunchDate - now);
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('cd-days').textContent = String(days).padStart(2, '0');
+            document.getElementById('cd-hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('cd-minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('cd-seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const colors = ['#8b5cf6', '#06b6d4', '#ec4899', '#34d399', '#facc15'];
+            const pieces = Array.from({ length: 110 }, () => ({
+                x: canvas.width / 2 + (Math.random() - 0.5) * 260,
+                y: canvas.height * 0.55,
+                vx: (Math.random() - 0.5) * 16,
+                vy: -Math.random() * 16 - 6,
+                size: Math.random() * 7 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotation: Math.random() * 360,
+                vRot: (Math.random() - 0.5) * 12,
+                opacity: 1
+            }));
+
+            function renderConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+                pieces.forEach(p => {
+                    if (p.opacity <= 0.02) return;
+                    active = true;
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.38; // Gravedad
+                    p.rotation += p.vRot;
+                    p.opacity -= 0.008;
+
+                    ctx.save();
+                    ctx.globalAlpha = Math.max(0, p.opacity);
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                    ctx.restore();
+                });
+
+                if (active) {
+                    requestAnimationFrame(renderConfetti);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            renderConfetti();
+        }
+
+        // Brillo radial seguidor de cursor en todas las tarjetas .glass-card
+        document.addEventListener('mousemove', (e) => {
+            document.querySelectorAll('.glass-card').forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // IntersectionObserver para aparición suave al hacer scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        const neuralCanvas = document.getElementById('neural-canvas');
+        const nCtx = neuralCanvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: -1000, y: -1000 };
+
+        function resizeNeuralCanvas() {
+            neuralCanvas.width = window.innerWidth;
+            neuralCanvas.height = window.innerHeight;
+            initParticles();
+        }
+
+        function initParticles() {
+            const count = window.innerWidth < 768 ? 32 : 65;
+            particles = Array.from({ length: count }, () => ({
+                x: Math.random() * neuralCanvas.width,
+                y: Math.random() * neuralCanvas.height,
+                vx: (Math.random() - 0.5) * 0.45,
+                vy: (Math.random() - 0.5) * 0.45,
+                radius: Math.random() * 1.8 + 0.8,
+                hue: Math.random() > 0.5 ? 265 : 190
+            }));
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('resize', resizeNeuralCanvas);
+
+        function animateNeuralNetwork() {
+            nCtx.clearRect(0, 0, neuralCanvas.width, neuralCanvas.height);
+
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > neuralCanvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > neuralCanvas.height) p.vy *= -1;
+
+                // Interacción suave con el cursor
+                const dxMouse = mouse.x - p.x;
+                const dyMouse = mouse.y - p.y;
+                const distMouse = Math.hypot(dxMouse, dyMouse);
+                if (distMouse < 160) {
+                    p.x -= dxMouse * 0.006;
+                    p.y -= dyMouse * 0.006;
+                }
+
+                // Dibujar nodo
+                nCtx.beginPath();
+                nCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                nCtx.fillStyle = `hsla(${p.hue}, 90%, 70%, 0.65)`;
+                nCtx.fill();
+
+                // Conectar nodos cercanos
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (dist < 135) {
+                        const alpha = (1 - dist / 135) * 0.18;
+                        nCtx.beginPath();
+                        nCtx.moveTo(p.x, p.y);
+                        nCtx.lineTo(p2.x, p2.y);
+                        nCtx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+                        nCtx.lineWidth = 1;
+                        nCtx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateNeuralNetwork);
+        }
+
+        window.onload = function () {
+            resizeNeuralCanvas();
+            animateNeuralNetwork();
+            switchDemoTab('arte');
+        };
+    </script>
+</body>
+</html>
