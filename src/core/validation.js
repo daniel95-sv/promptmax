@@ -3,6 +3,8 @@
  * Cumple con Skill.md Secciones 5.D, 10, 22.
  */
 
+import { MODEL_PROFILES } from "../data/models.js";
+
 export function analyzePrompt(prompt = "", state = {}) {
   const items = [];
   const text = String(prompt || "").trim();
@@ -18,9 +20,40 @@ export function analyzePrompt(prompt = "", state = {}) {
 
   const cat = state.category || "image";
   const f = state.fields?.[cat] || {};
-  const model = state.models?.[cat] || "generic";
+  const modelId = state.models?.[cat] || "generic";
 
-  // 1. Detección de campos clave faltantes
+  // A. Objetivo detectado (§ 5.D)
+  let detectedGoal = "";
+  if (cat === "image") {
+    detectedGoal = f.subject ? `Generación visual de «${f.subject}»` : "Generación de imagen visual";
+  } else if (cat === "video") {
+    detectedGoal = f.concept ? `Producción audiovisual de «${f.concept}»` : "Generación de video continuo";
+  } else if (cat === "text") {
+    detectedGoal = f.objective ? `Instrucción de texto: «${f.objective.slice(0, 50)}»` : "Redacción / Razonamiento de texto";
+  } else if (cat === "code") {
+    detectedGoal = f.problem ? `Desarrollo de software: «${f.problem.slice(0, 50)}»` : "Ingeniería de software y código";
+  }
+
+  items.push({
+    type: "info",
+    title: "Objetivo detectado",
+    text: detectedGoal
+  });
+
+  // B. Modelo seleccionado y verificación (§ 4, § 5.D)
+  const modelProfile = (MODEL_PROFILES[cat] || []).find((m) => m.id === modelId);
+  const modelName = modelProfile ? modelProfile.name : modelId;
+  const verifiedNotice = modelProfile?.verified
+    ? `Verificado (${modelProfile.revisionDate}) · ${modelProfile.desc}`
+    : "Perfil genérico compatible";
+
+  items.push({
+    type: "ok",
+    title: `Modelo seleccionado: ${modelName}`,
+    text: verifiedNotice
+  });
+
+  // C. Detección de campos clave faltantes (§ 5.D)
   const missing = [];
   if (cat === "image") {
     if (!f.subject) missing.push("sujeto principal");
@@ -55,7 +88,7 @@ export function analyzePrompt(prompt = "", state = {}) {
     });
   }
 
-  // 2. Detección de contradicciones
+  // D. Detección de contradicciones técnicas y físicas (§ 5.D, § 6)
   const contradictions = [];
   if (cat === "image") {
     // Bokeh con gran plano general
@@ -88,7 +121,7 @@ export function analyzePrompt(prompt = "", state = {}) {
     });
   }
 
-  // 3. Métricas de longitud y densidad
+  // E. Métricas de longitud y densidad (§ 5.D)
   const chars = text.length;
   const words = text.split(/\s+/).filter(Boolean).length;
   let densityLabel = "Conciso";
@@ -101,9 +134,9 @@ export function analyzePrompt(prompt = "", state = {}) {
     text: `${chars} caracteres · ${words} palabras.`
   });
 
-  // 4. Verificación de compatibilidad de sintaxis por modelo
+  // F. Verificación de compatibilidad de sintaxis por modelo (§ 5.D)
   if (cat === "image") {
-    if (model === "midjourney") {
+    if (modelId === "midjourney") {
       const hasAr = /--ar\s+\d+:\d+/.test(text);
       if (hasAr) {
         items.push({
@@ -112,13 +145,13 @@ export function analyzePrompt(prompt = "", state = {}) {
           text: "Parámetro de relación de aspecto (--ar) inyectado según la especificación oficial."
         });
       }
-    } else if (model === "sdxl" && f.avoid) {
+    } else if (modelId === "sdxl" && f.avoid) {
       items.push({
         type: "info",
         title: "Separación para Stable Diffusion XL",
         text: "SDXL rinde mejor separando el Negative Prompt en su campo dedicado de la UI externa."
       });
-    } else if (model === "flux" && f.inImageText) {
+    } else if (modelId === "flux" && f.inImageText) {
       items.push({
         type: "ok",
         title: "Optimización FLUX activa",
@@ -126,13 +159,28 @@ export function analyzePrompt(prompt = "", state = {}) {
       });
     }
   } else if (cat === "text") {
-    if (model === "claude") {
+    if (modelId === "claude") {
       items.push({
         type: "ok",
         title: "Estructura XML para Claude",
         text: "Instrucciones delimitadas por etiquetas semánticas para mayor fidelidad de seguimiento."
       });
     }
+  }
+
+  // G. Recomendaciones de mejora (§ 5.D)
+  if (words < 15) {
+    items.push({
+      type: "info",
+      title: "Recomendación de mejora",
+      text: "Un prompt muy breve puede generar ambigüedad; considera detallar el contexto, estilo o restricciones."
+    });
+  } else if (!f.avoid && (cat === "image" || cat === "video")) {
+    items.push({
+      type: "info",
+      title: "Elemento opcional sugerido",
+      text: "Añadir elementos a evitar (negative prompt) ayuda a prevenir artefactos indeseados."
+    });
   }
 
   return items;

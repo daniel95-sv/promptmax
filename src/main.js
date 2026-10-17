@@ -142,6 +142,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initModals((modalId) => {
     if (modalId === "borradores") {
       renderSavedDrafts(loadDraftIntoState);
+    } else if (modalId === "comparar") {
+      if (editorController) editorController.populateCompareModal();
     }
   });
 

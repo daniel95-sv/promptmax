@@ -3,10 +3,10 @@
 // ============================================================
 
 import { generatePrompt } from "../../core/prompt-engine.js";
-import { persistState, createExportPayload } from "../../core/storage.js";
+import { persistState, createExportPayload, saveDraft } from "../../core/storage.js";
 import { downloadText, sanitizeFilename } from "../../utils/file.js";
 import { renderAnalysis } from "./analysis.js";
-import { handleSaveCurrentDraft } from "./drafts.js";
+import { handleSaveCurrentDraft, renderSavedDrafts } from "./drafts.js";
 import { toast } from "../../components/toast.js";
 import { $ } from "../../utils/dom.js";
 
@@ -145,6 +145,81 @@ export function initPromptEditor(state, { onStateChange, onReset }) {
   const copyBtn = $("#copyBtn");
   if (copyBtn) copyBtn.addEventListener("click", copyPrompt);
 
+  // Duplicar prompt (Skill.md § 5.C, § 16)
+  const duplicateBtn = $("#duplicateBtn");
+  if (duplicateBtn) {
+    duplicateBtn.addEventListener("click", () => {
+      const v = editor ? editor.value : "";
+      if (!v.trim()) {
+        toast("No hay prompt para duplicar.");
+        return;
+      }
+      const f = state.fields[state.category];
+      const titleHint = f.subject || f.projectName || f.concept || f.role || state.category;
+      saveDraft({
+        title: `Copia de ${titleHint} (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`,
+        category: state.category,
+        language: state.language,
+        model: state.models[state.category],
+        fields: JSON.parse(JSON.stringify(state.fields[state.category])),
+        prompt: v
+      });
+      renderSavedDrafts();
+      toast("Prompt duplicado y archivado en tus borradores locales.");
+    });
+  }
+
+  // Comparador de versiones (Skill.md § 14, § 16)
+  function populateCompareModal() {
+    const genPrompt = generatePrompt(state);
+    const curPrompt = editor ? editor.value : "";
+
+    const genEl = $("#compareGenPrompt");
+    const curEl = $("#compareCurPrompt");
+    const genMeta = $("#compareGenMeta");
+    const curMeta = $("#compareCurMeta");
+    const summary = $("#compareSummary");
+
+    if (genEl) genEl.value = genPrompt;
+    if (curEl) curEl.value = curPrompt;
+
+    const genWords = genPrompt.trim() ? genPrompt.trim().split(/\s+/).length : 0;
+    const curWords = curPrompt.trim() ? curPrompt.trim().split(/\s+/).length : 0;
+
+    if (genMeta) genMeta.textContent = `${genWords} palabras · ${genPrompt.length} caracteres`;
+    if (curMeta) curMeta.textContent = `${curWords} palabras · ${curPrompt.length} caracteres`;
+
+    if (summary) {
+      if (genPrompt.trim() === curPrompt.trim()) {
+        summary.innerHTML = "<strong>Estado:</strong> La versión generada y la versión actual del editor son idénticas.";
+      } else {
+        const diffWords = Math.abs(curWords - genWords);
+        const diffChars = Math.abs(curPrompt.length - genPrompt.length);
+        summary.innerHTML = `<strong>Diferencias detectadas:</strong> Variación de ${diffWords} palabras y ${diffChars} caracteres entre las dos versiones.`;
+      }
+    }
+  }
+
+  const useGenVersionBtn = $("#useGenVersionBtn");
+  if (useGenVersionBtn) {
+    useGenVersionBtn.addEventListener("click", () => {
+      state.dirty = false;
+      regenerate();
+      const dlg = $("#modal-comparar");
+      if (dlg && typeof dlg.close === "function") dlg.close();
+      toast("Versión de opciones restaurada en el editor.");
+    });
+  }
+
+  const keepCurVersionBtn = $("#keepCurVersionBtn");
+  if (keepCurVersionBtn) {
+    keepCurVersionBtn.addEventListener("click", () => {
+      const dlg = $("#modal-comparar");
+      if (dlg && typeof dlg.close === "function") dlg.close();
+      toast("Versión actual conservada.");
+    });
+  }
+
   const downloadBtn = $("#downloadBtn");
   if (downloadBtn) {
     downloadBtn.addEventListener("click", () => {
@@ -228,6 +303,7 @@ export function initPromptEditor(state, { onStateChange, onReset }) {
   return {
     regenerate,
     updateMeta,
-    copyPrompt
+    copyPrompt,
+    populateCompareModal
   };
 }

@@ -1,10 +1,12 @@
 /**
  * Biblioteca de plantillas profesionales de PromptMax
- * Cumple con Skill.md Sección 13.
+ * Cumple con Skill.md Sección 13 en su totalidad (Imagen, Video, Texto y Programación).
  */
 
 export const TEMPLATES = [
-  // Imagen
+  // ==========================================
+  // IMAGEN (Skill.md § 13)
+  // ==========================================
   {
     id: "tpl-img-cinematic",
     cat: "image",
@@ -137,8 +139,77 @@ export const TEMPLATES = [
       avoid: "comida artificial, plástico, sobreexposición, colores fríos"
     }
   },
+  {
+    id: "tpl-img-3d-character",
+    cat: "image",
+    title: "Personaje 3D estilizado",
+    desc: "Render CGI de alta gama estilo largometraje de animación con materiales táctiles.",
+    data: {
+      subject: "pequeño robot explorador curioso con ojos luminosos expresivos",
+      appearance: "carcasa redondeada de cerámica blanca mate con detalles en cobre pulido",
+      setting: "taller acogedor iluminado por lámparas cálidas",
+      style: "Render 3D",
+      shot: "Plano medio",
+      lens: "50 mm",
+      lighting: "Iluminación de tres puntos",
+      composition: "Centro de interés",
+      color: "Paleta cálida",
+      atmosphere: "Alegre",
+      materials: "cerámica mate, cobre pulido, cristal translúcido",
+      detail: "microarañazos suaves de uso, oclusión ambiental realista",
+      quality: "render 3D Octane / Redshift para cine de animación",
+      aspect: "1:1",
+      avoid: "artefactos poligonales, textura plana sin relieve, sobreenfoque artificial"
+    }
+  },
+  {
+    id: "tpl-img-architecture",
+    cat: "image",
+    title: "Arquitectura contemporánea y paisajismo",
+    desc: "Vivienda moderna minimalista integrada en la naturaleza con líneas limpias.",
+    data: {
+      subject: "residencia moderna de una sola planta con grandes ventanales de suelo a techo",
+      setting: "bosque de coníferas nórdico con lago sereno en primer plano",
+      era: "arquitectura de vanguardia siglo XXI",
+      style: "Arquitectura",
+      shot: "Plano general",
+      lens: "24 mm",
+      lighting: "Luz natural suave",
+      composition: "Encuadre arquitectónico",
+      color: "Tonos tierra",
+      atmosphere: "Sereno y elegante",
+      materials: "hormigón visto arquitectónico, madera de cedro natural y cristal templado",
+      detail: "reflejos nítidos sobre la superficie del agua",
+      aspect: "16:9",
+      avoid: "distorsión en perspectiva de fuga, personas borrosas, cables aéreos"
+    }
+  },
+  {
+    id: "tpl-img-fashion",
+    cat: "image",
+    title: "Moda editorial de alta costura",
+    desc: "Estilismo vanguardista, pose dramática y atmósfera de pasarela parisina.",
+    data: {
+      subject: "modelo de alta costura con vestido escultural de seda drapeada",
+      appearance: "maquillaje editorial geométrico, peinado pulido hacia atrás, pose de perfil elegante",
+      setting: "estudio minimalista con columnas de mármol travertino",
+      style: "Fotografía editorial",
+      shot: "Plano entero",
+      lens: "85 mm",
+      lighting: "Luz dura",
+      composition: "Diagonales dinámicas",
+      color: "Monocromático",
+      atmosphere: "Elegante y vanguardista",
+      materials: "seda satinada que atrapa la luz, mármol mate",
+      quality: "portada de revista Vogue / Harper's Bazaar",
+      aspect: "2:3",
+      avoid: "poses rígidas antinaturales, piel sobreexpuesta sin textura"
+    }
+  },
 
-  // Video
+  // ==========================================
+  // VIDEO (Skill.md § 13)
+  // ==========================================
   {
     id: "tpl-vid-ad",
     cat: "video",
@@ -203,8 +274,52 @@ export const TEMPLATES = [
       avoid: "cambios en el diseño del traje, inconsistencias en la paleta cromática, saltos de ángulo ilógicos"
     }
   },
+  {
+    id: "tpl-vid-dramatic",
+    cat: "video",
+    title: "Escena dramática cinematográfica",
+    desc: "Iluminación en clave baja, travelling lento hacia el rostro y atmósfera de suspense.",
+    data: {
+      concept: "Momento de revelación crucial en un interrogatorio o conflicto",
+      initialScene: "Sujeto sentado en penumbra junto a una ventana empapada de lluvia",
+      action: "La cámara se acerca milímetro a milímetro mientras el sujeto levanta lentamente la mirada hacia la puerta que se abre con un haz de luz.",
+      cameraMotion: "Travelling de acercamiento",
+      speed: "Extremadamente lento y medido",
+      lighting: "Clave baja",
+      style: "Cine noir",
+      atmosphere: "Misterioso",
+      sound: "Gotas de lluvia golpeando el cristal, respiración pausada y crujido lejano de madera",
+      duration: "8s",
+      aspect: "21:9",
+      continuity: "Mantener coherencia estricta en el reflejo de la lluvia sobre la ventana y posición de las sombras.",
+      avoid: "movimientos bruscos, desenfoque accidental, cortes súbitos"
+    }
+  },
+  {
+    id: "tpl-vid-explainer",
+    cat: "video",
+    title: "Video explicativo dinámico",
+    desc: "Tomas claras, ritmo didáctico y transiciones limpias para contenido educativo.",
+    data: {
+      concept: "Demostración visual de un proceso científico o técnico",
+      initialScene: "Mano de especialista manipulando un microscopio electrónico en laboratorio pulcro",
+      action: "La mano ajusta el dial; la cámara realiza un paneo suave hacia la pantalla adyacente donde se visualizan estructuras moleculares tridimensionales.",
+      cameraMotion: "Paneo",
+      speed: "Fluido y didáctico",
+      lighting: "Luz difusa",
+      style: "Documental",
+      atmosphere: "Realista",
+      sound: "Bip sutil de instrumento electrónico y murmullo suave de ventilación de laboratorio",
+      duration: "10s",
+      aspect: "16:9",
+      continuity: "Bata de laboratorio blanca, guantes de nitrilo azul y disposición del instrumental idéntica.",
+      avoid: "sacudidas de cámara, reflejos molestos en pantallas, saltos de montaje"
+    }
+  },
 
-  // Texto
+  // ==========================================
+  // TEXTO (Skill.md § 13)
+  // ==========================================
   {
     id: "tpl-txt-seo",
     cat: "text",
@@ -260,8 +375,45 @@ export const TEMPLATES = [
       avoid: "sesgos de confirmación, conclusiones apresuradas, lenguaje emotivo"
     }
   },
+  {
+    id: "tpl-txt-script",
+    cat: "text",
+    title: "Guion audiovisual técnico",
+    desc: "Formato a dos columnas (Video / Audio) con indicaciones de plano y duración estimada.",
+    data: {
+      role: "Guionista audiovisual profesional y director creativo",
+      objective: "Escribir un guion técnico completo para video corporativo o documental de 3 minutos.",
+      context: "El video servirá de pieza audiovisual central de una campaña institucional.",
+      audience: "Clientes corporativos y público general exigente.",
+      instructions: "Estructurar tabla de dos columnas: columna izquierda 'VIDEO (Plano, movimiento, elementos en pantalla)' y columna derecha 'AUDIO (Locución / Diálogo, efectos sonoros FX, música de fondo)'. Incluir tiempos estimados en segundos por bloque.",
+      tone: "Inspirador y riguroso",
+      depth: "Detallado plano a plano",
+      outputFormat: "Tabla Markdown de dos columnas con minutaje",
+      avoid: "descripciones visuales genéricas, locuciones sin ritmo, pausas no cronometradas"
+    }
+  },
+  {
+    id: "tpl-txt-marketing",
+    cat: "text",
+    title: "Estrategia de marketing y plan de contenidos",
+    desc: "Plan integral con análisis de buyer persona, pilares temáticos, canales y métricas clave.",
+    data: {
+      role: "Director de Marketing y estratega de crecimiento (Growth Strategist)",
+      objective: "Diseñar un plan de marketing de contenidos trimestral orientado a conversión y autoridad.",
+      context: "Lanzamiento de un nuevo producto SaaS en un mercado competitivo.",
+      audience: "Equipos técnicos y líderes de operaciones B2B.",
+      instructions: "1. Perfil del buyer persona y puntos de dolor principales. 2. Tres pilares temáticos de contenido. 3. Matriz de canales recomendados (Blog, LinkedIn, Newsletter). 4. Calendario quincenal tipo. 5. KPIs medibles.",
+      tone: "Estratégico y accionable",
+      depth: "Completo con metas cuantitativas",
+      outputFormat: "Documento ejecutivo estructurado en secciones con listas y tablas",
+      acceptance: "Cada acción debe vincularse a un KPI medible (CAC, leads calificados, engagement).",
+      avoid: "tácticas desactualizadas, consejos genéricos de autoayuda, fórmulas mágicas sin base"
+    }
+  },
 
-  // Programación
+  // ==========================================
+  // PROGRAMACIÓN (Skill.md § 13)
+  // ==========================================
   {
     id: "tpl-code-webapp",
     cat: "code",
@@ -335,6 +487,42 @@ export const TEMPLATES = [
       tests: "Pruebas de endpoints con aserciones sobre códigos HTTP y estructura de payload.",
       acceptance: "Documentación OpenAPI disponible, validación estricta de esquemas y cobertura de tests >85%.",
       avoid: "exposición de trazas de error internas en producción, endpoints no autenticados"
+    }
+  },
+  {
+    id: "tpl-code-bugfix",
+    cat: "code",
+    title: "Corrección de errores y depuración sistemática",
+    desc: "Diagnóstico metódico de causa raíz, test de reproducción y parche de mínima invasión.",
+    data: {
+      taskType: "bugfix",
+      projectName: "Parche de Estabilidad",
+      problem: "Diagnosticar y corregir un fallo inesperado o excepción no controlada en el flujo de ejecución.",
+      stack: "TypeScript / JavaScript, Vitest / Jest",
+      architecture: "Respetar la arquitectura y convenciones de codificación existentes.",
+      instructions: "1. Reproducir el error mediante un caso de prueba unitario que falle. 2. Identificar la causa raíz sin suposiciones no verificadas. 3. Aplicar la corrección más simple y segura. 4. Comprobar que todos los tests previos sigan pasando.",
+      tests: "Incluir test de regresión automatizado que asegure que el fallo no vuelva a producirse.",
+      acceptance: "El test de regresión pasa, cero efectos secundarios en módulos vecinos.",
+      avoid: "modificar dependencias no relacionadas, reescritura masiva de código"
+    }
+  },
+  {
+    id: "tpl-code-db",
+    cat: "code",
+    title: "Diseño de base de datos y esquema relacional",
+    desc: "Esquema normalizado en 3NF con índices estratégicos, integridad referencial y migraciones.",
+    data: {
+      taskType: "feature",
+      projectName: "Esquema Relacional Central",
+      problem: "Diseñar el modelo de datos relacional para gestionar usuarios, proyectos, versiones de prompts y auditorías.",
+      appType: "Base de Datos Relacional (PostgreSQL / SQLite)",
+      stack: "SQL estándar, Migraciones versionadas, Índices B-Tree",
+      architecture: "Tercera Forma Normal (3NF) con claves foráneas e integridad referencial estricta.",
+      mustFeatures: "Tablas para users, projects, prompt_drafts, templates y audit_logs. Claves primarias UUIDv4.",
+      security: "Sin almacenamiento de contraseñas en texto plano (hashing bcrypt/argon2), triggers para updated_at automático.",
+      performance: "Índices en columnas de búsqueda frecuente y claves foráneas.",
+      acceptance: "Script SQL de migración idempotente y ejecutable sin errores.",
+      avoid: "claves foráneas sin índices, tipos de datos inconsistentes, campos nulos no controlados"
     }
   }
 ];
