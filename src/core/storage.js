@@ -207,8 +207,7 @@ export function persistState(state) {
 
 export function clearAllLocalData() {
   try {
-    localStorage.removeItem(STORAGE_KEYS.state);
-    localStorage.removeItem(STORAGE_KEYS.drafts);
+    Object.values(STORAGE_KEYS).forEach((k) => safeDel(k));
     return true;
   } catch {
     return false;

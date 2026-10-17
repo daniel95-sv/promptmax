@@ -6,7 +6,12 @@ import {
   getSavedDrafts,
   saveDraft,
   deleteDraft,
-  clearAllDrafts
+  clearAllDrafts,
+  clearAllLocalData,
+  STORAGE_KEYS,
+  setStoredTheme,
+  setStoredConsent,
+  persistState
 } from "../core/storage.js";
 
 describe("Storage & Serialization Module", () => {
@@ -75,5 +80,41 @@ describe("Storage & Serialization Module", () => {
 
     clearAllDrafts();
     expect(getSavedDrafts()).toEqual([]);
+  });
+
+  it("clears only drafts when clearAllDrafts is called", () => {
+    setStoredTheme("light");
+    setStoredConsent("all");
+    persistState(initialState());
+    saveDraft({ title: "Draft to clear" });
+
+    expect(getSavedDrafts().length).toBe(1);
+    expect(mockStore[STORAGE_KEYS.theme]).toBe("light");
+    expect(mockStore[STORAGE_KEYS.consent]).toBe("all");
+    expect(mockStore[STORAGE_KEYS.state]).toBeDefined();
+
+    clearAllDrafts();
+    expect(getSavedDrafts()).toEqual([]);
+    expect(mockStore[STORAGE_KEYS.theme]).toBe("light");
+    expect(mockStore[STORAGE_KEYS.consent]).toBe("all");
+    expect(mockStore[STORAGE_KEYS.state]).toBeDefined();
+  });
+
+  it("purges all local data completely with clearAllLocalData", () => {
+    setStoredTheme("light");
+    setStoredConsent("all");
+    persistState(initialState());
+    saveDraft({ title: "Draft 1" });
+    saveDraft({ title: "Draft 2" });
+
+    expect(Object.keys(mockStore).length).toBe(4);
+
+    const result = clearAllLocalData();
+    expect(result).toBe(true);
+    expect(mockStore[STORAGE_KEYS.state]).toBeUndefined();
+    expect(mockStore[STORAGE_KEYS.drafts]).toBeUndefined();
+    expect(mockStore[STORAGE_KEYS.theme]).toBeUndefined();
+    expect(mockStore[STORAGE_KEYS.consent]).toBeUndefined();
+    expect(Object.keys(mockStore).length).toBe(0);
   });
 });

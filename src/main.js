@@ -18,6 +18,7 @@
  */
 
 import { getState, resetState, persistState } from "./app/state.js";
+import { clearAllLocalData } from "./core/storage.js";
 import { initTheme } from "./app/theme.js";
 import { initConsent, initModals } from "./components/modal.js";
 import { initNavigation, syncCategoryTabs } from "./components/navigation.js";
@@ -182,6 +183,18 @@ document.addEventListener("DOMContentLoaded", () => {
       clearAllDrafts();
       renderSavedDrafts(loadDraftIntoState);
       toast("Todos los borradores han sido eliminados.");
+    });
+  }
+
+  const purgeAllDataBtn = $("#purgeAllDataBtn");
+  if (purgeAllDataBtn) {
+    purgeAllDataBtn.addEventListener("click", () => {
+      if (!confirm("¿Deseas purgar definitivamente todos tus datos locales de PromptMax (borradores, configuración y preferencias)? La aplicación se restablecerá a su estado inicial.")) return;
+      clearAllLocalData();
+      toast("Todos los datos locales han sido eliminados.");
+      setTimeout(() => {
+        window.location.reload();
+      }, 600);
     });
   }
 

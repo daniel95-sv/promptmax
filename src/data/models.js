@@ -14,7 +14,7 @@ export const MODEL_PROFILES = {
       parameters: ["aspect", "lighting", "style"],
       supportsNegative: true,
       negativeFormat: "natural",
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -26,7 +26,7 @@ export const MODEL_PROFILES = {
       parameters: ["--ar", "--v", "--style", "--no", "--c", "--s"],
       supportsNegative: true,
       negativeFormat: "flag", // --no word1 word2
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -38,7 +38,7 @@ export const MODEL_PROFILES = {
       parameters: ["aspect_ratio", "guidance_scale", "prompt"],
       supportsNegative: false,
       negativeFormat: "natural",
-      lastReviewed: "2026-02",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -50,7 +50,7 @@ export const MODEL_PROFILES = {
       parameters: ["positive", "negative", "cfg_scale", "steps"],
       supportsNegative: true,
       negativeFormat: "separate",
-      lastReviewed: "2026-01",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -62,7 +62,7 @@ export const MODEL_PROFILES = {
       parameters: ["context", "transformation"],
       supportsNegative: true,
       negativeFormat: "natural",
-      lastReviewed: "2026-02",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -74,7 +74,7 @@ export const MODEL_PROFILES = {
       parameters: ["size", "quality", "style"],
       supportsNegative: false,
       negativeFormat: "natural",
-      lastReviewed: "2026-02",
+      lastReviewed: "2026-10",
       verified: true
     }
   ],
@@ -88,7 +88,7 @@ export const MODEL_PROFILES = {
       parameters: ["duration", "aspect", "motion"],
       maxDurationSec: 10,
       supportsClips: true,
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -100,7 +100,7 @@ export const MODEL_PROFILES = {
       parameters: ["motion", "duration", "seed", "interpolate"],
       maxDurationSec: 10,
       supportsClips: true,
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -112,7 +112,7 @@ export const MODEL_PROFILES = {
       parameters: ["resolution", "duration", "aspect_ratio"],
       maxDurationSec: 20,
       supportsClips: true,
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -124,7 +124,7 @@ export const MODEL_PROFILES = {
       parameters: ["camera", "creativity", "duration"],
       maxDurationSec: 10,
       supportsClips: true,
-      lastReviewed: "2026-02",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -136,7 +136,7 @@ export const MODEL_PROFILES = {
       parameters: ["style", "audio_cue", "duration"],
       maxDurationSec: 15,
       supportsClips: true,
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     }
   ],
@@ -148,7 +148,7 @@ export const MODEL_PROFILES = {
       desc: "Estructura universal: Rol, Objetivo, Contexto, Tarea, Restricciones y Salida.",
       syntax: "Bloques Markdown estructurados",
       parameters: ["role", "objective", "constraints", "outputFormat"],
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -158,7 +158,7 @@ export const MODEL_PROFILES = {
       desc: "Instrucciones directas con ejemplos Few-Shot y formato explícito de respuesta.",
       syntax: "Markdown con llamadas a herramientas y pasos",
       parameters: ["system", "developer_message", "format"],
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -168,7 +168,7 @@ export const MODEL_PROFILES = {
       desc: "Aprovecha etiquetas XML semánticas (<context>, <instructions>, <rules>) y cadena de pensamiento.",
       syntax: "Etiquetas XML + Markdown de alta precisión",
       parameters: ["xml_tags", "scratchpad", "temperature"],
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -178,7 +178,7 @@ export const MODEL_PROFILES = {
       desc: "Instrucciones estructuradas con soporte multimodal y razonamiento en profundidad.",
       syntax: "Encabezados Markdown claros + Criterios de calidad",
       parameters: ["system_instructions", "grounding"],
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     }
   ],
@@ -190,7 +190,7 @@ export const MODEL_PROFILES = {
       desc: "Prompt técnico con arquitectura, criterios de aceptación verificables y pruebas.",
       syntax: "Especificación técnica estructurada",
       parameters: ["stack", "acceptance", "constraints"],
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -200,7 +200,7 @@ export const MODEL_PROFILES = {
       desc: "Instrucciones operativas de terminal: inspección previa, cambios mínimos y verificación con pruebas.",
       syntax: "Flujo: Diagnóstico → Planificación → Implementación → Pruebas",
       parameters: ["workspace_inspection", "non_destructive", "test_execution"],
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     },
     {
@@ -210,7 +210,7 @@ export const MODEL_PROFILES = {
       desc: "Instrucciones de código enfocadas en contratos de tipos, edge-cases y modularidad.",
       syntax: "Tipado estricto + Casos de prueba unitarios",
       parameters: ["type_safety", "modular_design"],
-      lastReviewed: "2026-03",
+      lastReviewed: "2026-10",
       verified: true
     }
   ]
