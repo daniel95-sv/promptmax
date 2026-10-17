@@ -161,6 +161,22 @@ export function safeDel(key) {
   }
 }
 
+export function getStoredTheme() {
+  return safeGet(STORAGE_KEYS.theme, "dark");
+}
+
+export function setStoredTheme(t) {
+  safeSet(STORAGE_KEYS.theme, t);
+}
+
+export function getStoredConsent() {
+  return safeGet(STORAGE_KEYS.consent);
+}
+
+export function setStoredConsent(val) {
+  safeSet(STORAGE_KEYS.consent, val);
+}
+
 export function loadStoredState() {
   const raw = safeGet(STORAGE_KEYS.state);
   if (!raw) return initialState();
