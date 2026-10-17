@@ -18,7 +18,11 @@ import {
   sanitizeFilename,
   createExportPayload,
   safeGet,
-  safeSet
+  safeSet,
+  getSavedDrafts,
+  saveDraft,
+  deleteDraft,
+  clearAllDrafts
 } from "./core/storage.js";
 
 // Utilidades DOM
@@ -57,8 +61,8 @@ function downloadText(text, filename, mime = "text/plain") {
 
 // Estado de la aplicación
 let state = loadStoredState();
-const undoStack = [];
-const redoStack = [];
+let undoStack = [];
+let redoStack = [];
 
 // ============================================================
 // Tema (Claro / Oscuro)
@@ -133,7 +137,10 @@ function initModals() {
       e.preventDefault();
       const id = btn.dataset.modal;
       const dlg = $(`#modal-${id}`);
-      if (dlg && typeof dlg.showModal === "function") dlg.showModal();
+      if (dlg && typeof dlg.showModal === "function") {
+        if (id === "borradores") renderSavedDrafts();
+        dlg.showModal();
+      }
     });
   });
 
@@ -146,6 +153,89 @@ function initModals() {
       closeBtn.addEventListener("click", () => dlg.close());
     }
   });
+}
+
+// ============================================================
+// Borradores Locales (Skill.md Sección 5.A, 16)
+// ============================================================
+function renderSavedDrafts() {
+  const container = $("#savedDraftsList");
+  if (!container) return;
+  const drafts = getSavedDrafts();
+
+  if (drafts.length === 0) {
+    container.innerHTML = `<div class="empty">No tienes borradores guardados todavía. Usa el botón «Guardar prompt actual» para archivar tus prompts.</div>`;
+    return;
+  }
+
+  container.innerHTML = "";
+  drafts.forEach((d) => {
+    const card = document.createElement("div");
+    card.className = "draft-card";
+    const dateFormatted = new Date(d.createdAt).toLocaleString();
+    card.innerHTML = `
+      <div class="meta">
+        <strong>${escapeHtml(d.title)}</strong>
+        <span>Categoría: ${escapeHtml(d.category.toUpperCase())} · ${dateFormatted}</span>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn small primary load-draft-btn">Cargar</button>
+        <button type="button" class="btn small ghost del-draft-btn" title="Eliminar borrador">×</button>
+      </div>
+    `;
+
+    card.querySelector(".load-draft-btn").addEventListener("click", () => {
+      state.category = d.category || state.category;
+      if (d.fields) state.fields[d.category] = { ...d.fields };
+      state.language = d.language || state.language;
+      state.models[d.category] = d.model || state.models[d.category];
+      state.manualPrompt = d.prompt || "";
+      state.dirty = Boolean(d.prompt);
+
+      persistState(state);
+      syncCategoryTabs();
+      renderBuilder();
+      const editor = $("#promptEditor");
+      if (editor) editor.value = d.prompt || generatePrompt(state);
+      updateMeta();
+      renderAnalysis();
+
+      const dlg = $("#modal-borradores");
+      if (dlg && typeof dlg.close === "function") dlg.close();
+
+      const constructorEl = document.getElementById("constructor");
+      if (constructorEl) constructorEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      toast(`Borrador «${d.title}» cargado.`);
+    });
+
+    card.querySelector(".del-draft-btn").addEventListener("click", () => {
+      deleteDraft(d.id);
+      renderSavedDrafts();
+      toast("Borrador eliminado.");
+    });
+
+    container.appendChild(card);
+  });
+}
+
+function handleSaveCurrentDraft() {
+  const editor = $("#promptEditor");
+  const promptText = editor ? editor.value : "";
+  const f = state.fields[state.category];
+  const titleHint = f.subject || f.projectName || f.concept || f.role || state.category;
+  const userTitle = prompt("Nombre o título para este borrador:", `Borrador ${state.category} - ${titleHint}`);
+  if (userTitle === null) return; // cancelado
+
+  saveDraft({
+    title: userTitle.trim() || `Borrador ${state.category}`,
+    category: state.category,
+    language: state.language,
+    model: state.models[state.category],
+    fields: state.fields[state.category],
+    prompt: promptText
+  });
+  renderSavedDrafts();
+  toast("Prompt guardado en tus borradores locales.");
 }
 
 // ============================================================
@@ -698,40 +788,66 @@ function renderBuilder() {
       })
     );
 
+    // Accordion de continuidad y clips con botón integrado
+    const continuityChildren = [
+      renderField({
+        id: "vid-duration",
+        label: "Duración deseada",
+        value: f.duration,
+        placeholder: "5s, 10s, 3 clips de 5s…",
+        onInput: (v) => { f.duration = v; persistState(state); regenerate(); }
+      }),
+      renderChips({
+        label: "Relación de aspecto",
+        value: f.aspect,
+        options: OPTS.aspect,
+        onChange: (v) => { f.aspect = v; persistState(state); regenerate(); }
+      }),
+      renderField({
+        id: "vid-continuity",
+        label: "Reglas de continuidad estricta",
+        value: f.continuity,
+        kind: "textarea",
+        placeholder: "Conservar misma vestimenta, iluminación y rasgos faciales entre tomas",
+        onInput: (v) => { f.continuity = v; persistState(state); regenerate(); }
+      }),
+      renderField({
+        id: "vid-avoid",
+        label: "Elementos a evitar",
+        value: f.avoid,
+        kind: "textarea",
+        placeholder: "movimientos erráticos de cámara, saltos temporales, deformaciones",
+        onInput: (v) => { f.avoid = v; persistState(state); regenerate(); }
+      })
+    ];
+
+    // Botón de alternancia de clips
+    const clipBtnWrap = document.createElement("div");
+    clipBtnWrap.className = "field";
+    clipBtnWrap.style.marginTop = "0.6rem";
+    const clipBtn = document.createElement("button");
+    clipBtn.type = "button";
+    clipBtn.className = "btn small";
+    clipBtn.id = "clipToggleBtn";
+    const isMultiClip = Boolean(f._multiClip);
+    clipBtn.setAttribute("aria-pressed", isMultiClip ? "true" : "false");
+    clipBtn.textContent = isMultiClip ? "✓ Modo 3 Clips Continuos Activado" : "🎬 Dividir en 3 Clips con Continuidad Estricta";
+    clipBtn.addEventListener("click", () => {
+      f._multiClip = !f._multiClip;
+      clipBtn.setAttribute("aria-pressed", f._multiClip ? "true" : "false");
+      clipBtn.textContent = f._multiClip ? "✓ Modo 3 Clips Continuos Activado" : "🎬 Dividir en 3 Clips con Continuidad Estricta";
+      state.dirty = false;
+      persistState(state);
+      regenerate();
+      toast(f._multiClip ? "División en clips activada." : "Modo clip único activado.");
+    });
+    clipBtnWrap.appendChild(clipBtn);
+    continuityChildren.unshift(clipBtnWrap);
+
     c.appendChild(
       renderAccordion({
         title: "Continuidad, duración y clips",
-        children: [
-          renderField({
-            id: "vid-duration",
-            label: "Duración deseada",
-            value: f.duration,
-            placeholder: "5s, 10s, 3 clips de 5s…",
-            onInput: (v) => { f.duration = v; persistState(state); regenerate(); }
-          }),
-          renderChips({
-            label: "Relación de aspecto",
-            value: f.aspect,
-            options: OPTS.aspect,
-            onChange: (v) => { f.aspect = v; persistState(state); regenerate(); }
-          }),
-          renderField({
-            id: "vid-continuity",
-            label: "Reglas de continuidad estricta",
-            value: f.continuity,
-            kind: "textarea",
-            placeholder: "Conservar misma vestimenta, iluminación y rasgos faciales entre tomas",
-            onInput: (v) => { f.continuity = v; persistState(state); regenerate(); }
-          }),
-          renderField({
-            id: "vid-avoid",
-            label: "Elementos a evitar",
-            value: f.avoid,
-            kind: "textarea",
-            placeholder: "movimientos erráticos de cámara, saltos temporales, deformaciones",
-            onInput: (v) => { f.avoid = v; persistState(state); regenerate(); }
-          })
-        ]
+        children: continuityChildren
       })
     );
   } else if (cat === "text") {
@@ -1034,6 +1150,9 @@ function updateMeta() {
   const charEl = $("#charCount");
   if (charEl) charEl.textContent = `${chars} caracteres · ${words} palabras`;
 
+  const mobileBadge = $("#mobilePromptBadge");
+  if (mobileBadge) mobileBadge.textContent = `Ver Prompt (${words} palabras)`;
+
   const ind = $("#dirtyIndicator");
   if (ind) {
     if (state.dirty) {
@@ -1171,6 +1290,24 @@ function syncCategoryTabs() {
 // Event Listeners y Productividad (Skill.md Sección 16)
 // ============================================================
 function bindEvents() {
+  // Mobile Menu Toggle
+  const mobileMenuBtn = $("#mobileMenuBtn");
+  const mobileNav = $("#mobileNav");
+  if (mobileMenuBtn && mobileNav) {
+    mobileMenuBtn.addEventListener("click", () => {
+      const isOpen = mobileNav.getAttribute("data-open") === "true";
+      mobileNav.setAttribute("data-open", (!isOpen).toString());
+      mobileMenuBtn.setAttribute("aria-expanded", (!isOpen).toString());
+    });
+
+    $$(".mobile-nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        mobileNav.setAttribute("data-open", "false");
+        mobileMenuBtn.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+
   // Tabs de categoría
   $$(".cat-tab").forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -1189,11 +1326,55 @@ function bindEvents() {
     editor.addEventListener("input", (e) => {
       undoStack.push(state.manualPrompt || editor.value);
       if (undoStack.length > 30) undoStack.shift();
+      redoStack = []; // limpiar redo al escribir
       state.dirty = true;
       state.manualPrompt = e.target.value;
       updateMeta();
       renderAnalysis();
       persistState(state);
+    });
+  }
+
+  // Deshacer y Rehacer (Skill.md Sección 5.C)
+  const undoBtn = $("#undoBtn");
+  if (undoBtn) {
+    undoBtn.addEventListener("click", () => {
+      if (undoStack.length === 0) {
+        toast("Nada que deshacer.");
+        return;
+      }
+      const prev = undoStack.pop();
+      if (editor) {
+        redoStack.push(editor.value);
+        editor.value = prev;
+        state.manualPrompt = prev;
+        state.dirty = true;
+        updateMeta();
+        renderAnalysis();
+        persistState(state);
+        toast("Cambio deshecho.");
+      }
+    });
+  }
+
+  const redoBtn = $("#redoBtn");
+  if (redoBtn) {
+    redoBtn.addEventListener("click", () => {
+      if (redoStack.length === 0) {
+        toast("Nada que rehacer.");
+        return;
+      }
+      const next = redoStack.pop();
+      if (editor) {
+        undoStack.push(editor.value);
+        editor.value = next;
+        state.manualPrompt = next;
+        state.dirty = true;
+        updateMeta();
+        renderAnalysis();
+        persistState(state);
+        toast("Cambio rehecho.");
+      }
     });
   }
 
@@ -1275,6 +1456,23 @@ function bindEvents() {
     });
   }
 
+  // Botones Guardar Borrador y Mis Borradores
+  const saveDraftBtn = $("#saveDraftBtn");
+  if (saveDraftBtn) saveDraftBtn.addEventListener("click", handleSaveCurrentDraft);
+
+  const saveCurrentDraftBtn = $("#saveCurrentDraftBtn");
+  if (saveCurrentDraftBtn) saveCurrentDraftBtn.addEventListener("click", handleSaveCurrentDraft);
+
+  const clearAllDraftsBtn = $("#clearAllDraftsBtn");
+  if (clearAllDraftsBtn) {
+    clearAllDraftsBtn.addEventListener("click", () => {
+      if (!confirm("¿Deseas eliminar todos los borradores locales guardados?")) return;
+      clearAllDrafts();
+      renderSavedDrafts();
+      toast("Todos los borradores han sido eliminados.");
+    });
+  }
+
   // Botón Imprimir
   const printBtn = $("#printBtn");
   if (printBtn) {
@@ -1311,17 +1509,23 @@ function bindEvents() {
     });
   }
 
-  // Multi-clip toggle para video (Skill.md Sección 7)
-  const clipToggleBtn = $("#clipToggleBtn");
-  if (clipToggleBtn) {
-    clipToggleBtn.addEventListener("click", () => {
-      const cur = Boolean(state.fields.video._multiClip);
-      state.fields.video._multiClip = !cur;
-      clipToggleBtn.setAttribute("aria-pressed", (!cur).toString());
-      state.dirty = false;
-      persistState(state);
-      regenerate();
-      toast(!cur ? "Modo división en clips de video activado." : "Modo clip único activado.");
+  // Mobile Floating Quick Bar Actions
+  const mobileQuickCopy = $("#mobileQuickCopy");
+  if (mobileQuickCopy && copyBtn) {
+    mobileQuickCopy.addEventListener("click", () => copyBtn.click());
+  }
+  const mobileQuickRegen = $("#mobileQuickRegen");
+  if (mobileQuickRegen && regenBtn) {
+    mobileQuickRegen.addEventListener("click", () => regenBtn.click());
+  }
+  const mobileJumpPrompt = $("#mobileJumpPrompt");
+  if (mobileJumpPrompt) {
+    mobileJumpPrompt.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = $("#promptEditor") || document.querySelector(".preview-wrap");
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     });
   }
 

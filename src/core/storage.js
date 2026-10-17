@@ -223,3 +223,45 @@ export function createExportPayload(state, promptText) {
     isManualEdit: Boolean(state.dirty)
   };
 }
+
+export function getSavedDrafts() {
+  const raw = safeGet(STORAGE_KEYS.drafts);
+  if (!raw) return [];
+  try {
+    const list = JSON.parse(raw);
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveDraft(draft) {
+  const list = getSavedDrafts();
+  const id = "draft_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+  const entry = {
+    id,
+    title: draft.title || `Borrador ${draft.category || "prompt"} (${new Date().toLocaleDateString()})`,
+    category: draft.category || "image",
+    language: draft.language || "en",
+    model: draft.model || "generic",
+    fields: draft.fields || {},
+    prompt: draft.prompt || "",
+    createdAt: new Date().toISOString()
+  };
+  list.unshift(entry);
+  if (list.length > 50) list.pop(); // límite de 50 borradores
+  safeSet(STORAGE_KEYS.drafts, JSON.stringify(list));
+  return entry;
+}
+
+export function deleteDraft(id) {
+  const list = getSavedDrafts().filter((d) => d.id !== id);
+  safeSet(STORAGE_KEYS.drafts, JSON.stringify(list));
+  return list;
+}
+
+export function clearAllDrafts() {
+  safeDel(STORAGE_KEYS.drafts);
+  return [];
+}
+
