@@ -1059,7 +1059,8 @@
             margin-bottom: .75rem
         }
 
-        .improve-actions .btn[aria-pressed="true"] {
+        .improve-actions .btn[aria-pressed="true"],
+        .tpl-filters .tpl-filter-btn[aria-pressed="true"] {
             background: var(--accent);
             border-color: var(--accent);
             color: #fff
@@ -1504,7 +1505,7 @@
             }
         }
     </style>
-  <script type="module" crossorigin src="./assets/index-CiaCwnpN.js"></script>
+  <script type="module" crossorigin src="./assets/index-C61sObT5.js"></script>
 </head>
 
 <body>
@@ -1530,6 +1531,10 @@
                 <a href="#guia">Guía</a>
             </nav>
             <div class="header-actions">
+                <button class="btn small ghost" type="button" id="headerShortcutsBtn" data-modal="atajos" title="Atajos de teclado">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" aria-hidden="true" style="margin-right: 4px; vertical-align: -2px;"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="6" y1="8" x2="6" y2="8"/><line x1="10" y1="8" x2="10" y2="8"/><line x1="14" y1="8" x2="14" y2="8"/><line x1="18" y1="8" x2="18" y2="8"/><line x1="6" y1="12" x2="6" y2="12"/><line x1="10" y1="12" x2="10" y2="12"/><line x1="14" y1="12" x2="14" y2="12"/><line x1="18" y1="12" x2="18" y2="12"/><line x1="8" y1="16" x2="16" y2="16"/></svg>
+                    Atajos
+                </button>
                 <button class="btn small ghost" type="button" id="headerDraftsBtn" data-modal="borradores" title="Mis borradores locales">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" aria-hidden="true" style="margin-right: 4px; vertical-align: -2px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                     Borradores
@@ -2087,6 +2092,44 @@
                     </div>
                 </div>
                 <div id="compareSummary" style="background: var(--surface-2); padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.85rem;"></div>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="modal" id="modal-atajos" aria-labelledby="modal-atajos-title">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h2 id="modal-atajos-title">Atajos de teclado</h2>
+                <button type="button" class="modal-close" data-close aria-label="Cerrar modal de atajos">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-dim); margin-bottom: 1rem;">Usa combinaciones de teclas para agilizar la creación y edición de tus prompts:</p>
+                <div style="display: grid; gap: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <span>Regenerar prompt desde opciones</span>
+                        <kbd style="background: var(--surface-3); border: 1px solid var(--border-strong); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace;">Ctrl + Enter</kbd>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <span>Guardar en borradores locales</span>
+                        <kbd style="background: var(--surface-3); border: 1px solid var(--border-strong); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace;">Ctrl + S</kbd>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <span>Copiar prompt generado</span>
+                        <kbd style="background: var(--surface-3); border: 1px solid var(--border-strong); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace;">Ctrl + Alt + C</kbd>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <span>Deshacer última edición</span>
+                        <kbd style="background: var(--surface-3); border: 1px solid var(--border-strong); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace;">Ctrl + Z</kbd>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <span>Rehacer edición</span>
+                        <kbd style="background: var(--surface-3); border: 1px solid var(--border-strong); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace;">Ctrl + Y</kbd>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                        <span>Cerrar ventana modal activa</span>
+                        <kbd style="background: var(--surface-3); border: 1px solid var(--border-strong); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace;">Escape</kbd>
+                    </div>
+                </div>
             </div>
         </div>
     </dialog>
