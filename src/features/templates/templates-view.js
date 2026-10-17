@@ -10,18 +10,20 @@ let tplSearchQuery = "";
 
 export function initTemplatesView(container, onApplyTemplate) {
   // Bind category filter tabs
-  $$("#templateFilters .tab").forEach((btn) => {
+  $$(".tpl-filter-btn, #templateFilters .tab").forEach((btn) => {
     btn.addEventListener("click", () => {
-      activeTplFilter = btn.dataset.filter || "all";
-      $$("#templateFilters .tab").forEach((x) =>
-        x.setAttribute("aria-selected", x === btn ? "true" : "false")
-      );
+      activeTplFilter = btn.dataset.catFilter || btn.dataset.filter || "all";
+      $$(".tpl-filter-btn, #templateFilters .tab").forEach((x) => {
+        const isMatch = x === btn;
+        x.setAttribute("aria-pressed", isMatch ? "true" : "false");
+        x.setAttribute("aria-selected", isMatch ? "true" : "false");
+      });
       renderTemplates(container, onApplyTemplate);
     });
   });
 
   // Bind search input
-  const searchInput = $("#templateSearch");
+  const searchInput = $("#tplSearchInput") || $("#templateSearch");
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       tplSearchQuery = e.target.value.trim();

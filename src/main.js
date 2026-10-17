@@ -29,7 +29,7 @@ import { renderCodeBuilder } from "./features/code-prompts/code-builder.js";
 import { renderModelSelector, renderModelCatalog } from "./features/model-profiles/models-view.js";
 import { initTemplatesView } from "./features/templates/templates-view.js";
 import { initPromptEditor } from "./features/prompt-editor/editor.js";
-import { renderSavedDrafts, clearAllDrafts } from "./features/prompt-editor/drafts.js";
+import { renderSavedDrafts, clearAllDrafts, handleSaveCurrentDraft } from "./features/prompt-editor/drafts.js";
 import { initImprovePrompt } from "./features/prompt-editor/improve.js";
 import { generatePrompt } from "./core/prompt-engine/index.js";
 import { $ } from "./utils/dom.js";
@@ -207,4 +207,47 @@ document.addEventListener("DOMContentLoaded", () => {
   if (editorController) {
     editorController.updateMeta();
   }
+
+  // 12. Inicializar año en el pie de página
+  const yearEl = $("#year");
+  if (yearEl) {
+    yearEl.textContent = new Date().getFullYear();
+  }
+
+  // 13. Atajos de teclado globales (Skill.md § 20)
+  window.addEventListener("keydown", (e) => {
+    // Escape: cerrar modales abiertos
+    if (e.key === "Escape") {
+      document.querySelectorAll("dialog[open]").forEach((d) => d.close());
+      return;
+    }
+
+    // Ctrl/Cmd + Enter: regenerar prompt
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      e.preventDefault();
+      state.dirty = false;
+      if (editorController) {
+        editorController.regenerate();
+        toast("Prompt regenerado desde las opciones.");
+      }
+      return;
+    }
+
+    // Ctrl/Cmd + S: guardar borrador
+    if ((e.ctrlKey || e.metaKey) && (e.key === "s" || e.key === "S")) {
+      e.preventDefault();
+      const ed = $("#promptEditor");
+      handleSaveCurrentDraft(state, ed ? ed.value : "");
+      return;
+    }
+
+    // Ctrl/Cmd + Alt + C: copiar prompt
+    if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === "c" || e.key === "C")) {
+      e.preventDefault();
+      if (editorController) {
+        editorController.copyPrompt();
+      }
+      return;
+    }
+  });
 });

@@ -6,7 +6,9 @@ import { $, $$ } from "../utils/dom.js";
 
 export function syncCategoryTabs(activeCategory) {
   $$(".cat-tab").forEach((t) => {
-    t.setAttribute("aria-selected", t.dataset.cat === activeCategory ? "true" : "false");
+    const isMatch = t.dataset.cat === activeCategory;
+    t.setAttribute("aria-pressed", isMatch ? "true" : "false");
+    t.setAttribute("aria-selected", isMatch ? "true" : "false");
   });
 }
 

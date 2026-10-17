@@ -11,6 +11,15 @@ export function initConsent() {
   if (!getStoredConsent()) {
     banner.classList.add("visible");
   }
+
+  $$("[data-consent]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const mode = btn.dataset.consent || "all";
+      setStoredConsent(mode);
+      banner.classList.remove("visible");
+    });
+  });
+
   const accept = $("#cookieAccept");
   const reject = $("#cookieReject");
   if (accept) {
@@ -23,6 +32,23 @@ export function initConsent() {
     reject.addEventListener("click", () => {
       setStoredConsent("rejected");
       banner.classList.remove("visible");
+    });
+  }
+
+  const moreInfo = $("#cookieMoreInfo");
+  if (moreInfo) {
+    moreInfo.addEventListener("click", () => {
+      const dlg = $("#modal-cookies");
+      if (dlg && typeof dlg.showModal === "function") dlg.showModal();
+    });
+  }
+
+  const openConsent = $("#openConsent");
+  if (openConsent) {
+    openConsent.addEventListener("click", (e) => {
+      e.preventDefault();
+      banner.classList.add("visible");
+      banner.scrollIntoView({ behavior: "smooth", block: "center" });
     });
   }
 }
@@ -46,9 +72,9 @@ export function initModals(onModalOpen) {
     dlg.addEventListener("click", (e) => {
       if (e.target === dlg) dlg.close();
     });
-    const closeBtn = dlg.querySelector("[data-close]");
-    if (closeBtn) {
+    const closeBtns = dlg.querySelectorAll("[data-close], .modal-close");
+    closeBtns.forEach((closeBtn) => {
       closeBtn.addEventListener("click", () => dlg.close());
-    }
+    });
   });
 }
