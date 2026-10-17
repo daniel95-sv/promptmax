@@ -32,6 +32,8 @@ import { initPromptEditor } from "./features/prompt-editor/editor.js";
 import { renderSavedDrafts, clearAllDrafts, handleSaveCurrentDraft } from "./features/prompt-editor/drafts.js";
 import { initImprovePrompt } from "./features/prompt-editor/improve.js";
 import { generatePrompt } from "./core/prompt-engine/index.js";
+import { getExampleFor } from "./data/examples.js";
+import { MODEL_PROFILES } from "./data/models.js";
 import { $ } from "./utils/dom.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -52,17 +54,43 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 3. Render dinámico del constructor por categorías
+  function handleAutoFillExample() {
+    const example = getExampleFor(state.category, state.models[state.category]);
+    if (!example) return;
+
+    // Actualizar campos del constructor con el ejemplo
+    Object.assign(state.fields[state.category], example);
+    state.dirty = false;
+    state.manualPrompt = "";
+    persistState(state);
+
+    // Re-renderizar el constructor para poblar todos los controles
+    renderBuilder();
+
+    // Regenerar el prompt y metadatos
+    if (editorController) {
+      editorController.regenerate();
+    }
+
+    const modelObj = (MODEL_PROFILES[state.category] || []).find((m) => m.id === state.models[state.category]);
+    const modelName = modelObj ? modelObj.name : state.models[state.category];
+    const catNames = { image: "Imagen", video: "Video", text: "Texto", code: "Programación" };
+    const catName = catNames[state.category] || state.category;
+
+    toast(`✨ Campos completados con ejemplo de ${catName} para ${modelName}.`);
+  }
+
   function renderBuilder() {
     const container = $("#builderForm");
     if (!container) return;
     container.innerHTML = "";
 
-    // Selector de modelo
+    // Selector de modelo con botón de autocompletar ejemplo
     renderModelSelector(container, state, (selectedModel) => {
       persistState(state);
       if (editorController) editorController.regenerate();
       toast(`Modelo «${selectedModel.name}» seleccionado.`);
-    });
+    }, handleAutoFillExample);
 
     // Sub-constructor por categoría
     switch (state.category) {
