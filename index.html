@@ -10,7 +10,7 @@
 
     <title>PromptMax — Creador gratuito de prompts estructurados para IA</title>
     <meta name="description"
-        content="Crea prompts profesionales para IA de imagen, video, texto y código con controles visuales. 100% gratis, sin registro y en tu navegador. Compatible con Midjourney, FLUX, Sora, Veo, Claude, ChatGPT y Gemini.">
+        content="Generador gratuito de prompts para IA de imagen, video, texto y código. Sin registro, 100% en tu navegador y compatible con Midjourney, FLUX, Sora y Claude.">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="PromptMax">
 
@@ -1505,7 +1505,7 @@
             }
         }
     </style>
-  <script type="module" crossorigin src="./assets/index-Ct4qRfEx.js"></script>
+  <script type="module" crossorigin src="./assets/index-BjNZAd2O.js"></script>
 </head>
 
 <body>
@@ -1778,10 +1778,8 @@
                             detallada</button>
                         <button type="button" class="btn small" data-op="technical" aria-pressed="false">Especificación
                             técnica</button>
-                        <button type="button" class="btn small" data-op="translate-en" aria-pressed="false">Traducir a
-                            inglés</button>
-                        <button type="button" class="btn small" data-op="translate-es" aria-pressed="false">Traducir a
-                            español</button>
+                        <button type="button" class="btn small" data-op="translate-en" aria-pressed="false" title="Traducción rápida local de términos clave al inglés">Traducir a inglés (términos)</button>
+                        <button type="button" class="btn small" data-op="translate-es" aria-pressed="false" title="Traducción rápida local de términos clave al español">Traducir a español (términos)</button>
                         <button type="button" class="btn small" data-op="model-adapt" aria-pressed="false">Adaptar a
                             modelo</button>
                     </div>
@@ -1790,6 +1788,7 @@
                         <button class="btn" type="button" id="improveCopy">Copiar resultado</button>
                         <button class="btn ghost" type="button" id="improveUse">Usar en constructor</button>
                     </div>
+                    <p class="hint" style="margin-top: 0.6rem; font-size: 0.8rem; color: var(--text-dim);">ℹ️ <strong>Privacidad:</strong> Las transformaciones y traducciones de términos se ejecutan 100% en tu navegador mediante diccionarios deterministas, sin enviar texto a servidores externos.</p>
                     <div class="field" style="margin-top:.9rem">
                         <label for="improveOutput">Resultado</label>
                         <textarea id="improveOutput" class="prompt-editor" style="min-height:160px" readonly></textarea>
@@ -1988,8 +1987,8 @@
                 <p>PromptMax es un proyecto independiente. Para cualquier consulta relacionada con la privacidad, puedes
                     usar el repositorio público del proyecto.</p>
                 <h3>Datos que tratamos</h3>
-                <p>PromptMax no recoge datos personales en servidores propios. Todo el almacenamiento es local, en el
-                    navegador del usuario:</p>
+                <p>La generación, edición y optimización de prompts ocurren de forma 100% local en tu navegador. El servicio de alojamiento web (CDN) procesa únicamente la entrega técnica de los archivos estáticos mediante protocolos web estándar (dirección IP y encabezados técnicos de red), sin acceder jamás al contenido de los prompts ni almacenar perfiles de usuario.</p>
+                <p>Todo el almacenamiento persistente es local en tu dispositivo:</p>
                 <ul>
                     <li><strong>Borrador del constructor</strong>: se guarda en <code>localStorage</code> para no perder
                         tu trabajo al recargar.</li>
@@ -2161,9 +2160,9 @@
                 <p>Si aceptas, activamos una analítica anónima sin cookies (sin identificadores personales). Se usa
                     únicamente para conocer el uso agregado del producto y mejorar la experiencia. Puedes rechazarla sin
                     que la herramienta deje de funcionar.</p>
-                <h3>Cómo gestionar</h3>
-                <p>Puedes cambiar tu elección en cualquier momento desde el enlace «Configurar cookies» del pie de
-                    página. También puedes borrar los datos locales desde la configuración de tu navegador.</p>
+                <h3>Cómo gestionar y eliminar datos</h3>
+                <p>Puedes cambiar tu elección en cualquier momento desde el enlace «Configurar cookies». Si deseas purgar completamente todo rastro de datos locales (estado, borradores, tema y consentimiento), utiliza el siguiente botón:</p>
+                <button type="button" class="btn small" id="purgeAllDataBtn" style="color: var(--error, #ef4444); border-color: rgba(239, 68, 68, 0.4); margin-top: 0.5rem; width: 100%;">🗑️ Borrar todos mis datos locales de PromptMax</button>
             </div>
         </div>
     </dialog>
