@@ -1349,6 +1349,138 @@
             background: var(--text-faint)
         }
 
+        /* Mobile Navigation & Responsive Enhancements */
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        .mobile-nav {
+            display: none;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .mobile-nav[data-open="true"] {
+            display: flex;
+        }
+
+        .mobile-nav a,
+        .mobile-nav button {
+            padding: 0.7rem 0.9rem;
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 0.92rem;
+            font-weight: 500;
+            text-align: left;
+            background: none;
+            border: none;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .mobile-nav a:hover,
+        .mobile-nav button:hover {
+            background: var(--surface-2);
+            text-decoration: none;
+        }
+
+        @media(max-width:899px) {
+            .mobile-menu-btn {
+                display: grid;
+            }
+        }
+
+        /* Mobile floating quick jump bar */
+        .mobile-floating-bar {
+            display: none;
+            position: fixed;
+            bottom: 1.25rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 85;
+            background: color-mix(in srgb, var(--surface) 88%, transparent);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .45);
+            padding: 0.4rem 0.6rem;
+            gap: 0.45rem;
+            align-items: center;
+            max-width: calc(100vw - 2rem);
+        }
+
+        @media(max-width:1023px) {
+            .mobile-floating-bar {
+                display: flex;
+            }
+        }
+
+        /* Drafts list cards */
+        .draft-card {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .draft-card .meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .draft-card .meta strong {
+            display: block;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .draft-card .meta span {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+        }
+
+        .draft-card .actions {
+            display: flex;
+            gap: 0.35rem;
+            margin: 0;
+            flex-shrink: 0;
+        }
+
+        /* Touch target and mobile layout optimizations */
+        @media(max-width:768px) {
+            .btn, .cat-tab, .chip {
+                min-height: 42px;
+            }
+            .cat-tabs {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+            .app-grid {
+                gap: 1.25rem;
+            }
+            .panel {
+                padding: 0.95rem;
+            }
+            .actions .btn {
+                flex: 1 1 auto;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+
         @media print {
 
             .site-header,
@@ -1372,7 +1504,7 @@
             }
         }
     </style>
-  <script type="module" crossorigin src="./assets/index-CTA3zg4B.js"></script>
+  <script type="module" crossorigin src="./assets/index-BQ5y181z.js"></script>
 </head>
 
 <body>
@@ -1398,6 +1530,10 @@
                 <a href="#guia">Guía</a>
             </nav>
             <div class="header-actions">
+                <button class="btn small ghost" type="button" id="headerDraftsBtn" data-modal="borradores" title="Mis borradores locales">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" aria-hidden="true" style="margin-right: 4px; vertical-align: -2px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Borradores
+                </button>
                 <button class="icon-btn" id="themeToggle" type="button" aria-label="Cambiar entre tema claro y oscuro"
                     title="Cambiar tema">
                     <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1407,8 +1543,30 @@
                             d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
                     </svg>
                 </button>
+                <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Abrir menú de navegación" aria-expanded="false" title="Menú">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
             </div>
         </div>
+        <nav class="mobile-nav" id="mobileNav" aria-label="Navegación móvil" data-open="false">
+            <a href="#constructor" class="mobile-nav-link">Constructor de prompts</a>
+            <a href="#plantillas" class="mobile-nav-link">Biblioteca de plantillas</a>
+            <a href="#mejorar" class="mobile-nav-link">Mejorar prompt</a>
+            <a href="#modelos" class="mobile-nav-link">Modelos compatibles</a>
+            <a href="#guia" class="mobile-nav-link">Guía y preguntas frecuentes</a>
+            <button type="button" data-modal="borradores" class="mobile-nav-link">
+                <span>Mis borradores guardados</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>
+            </button>
+            <button type="button" data-modal="atajos" class="mobile-nav-link">
+                <span>Atajos de teclado</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+            </button>
+        </nav>
     </header>
 
     <main id="main">
@@ -1521,7 +1679,7 @@
                                 <span id="dirtyIndicator"></span>
                             </div>
                             <div class="actions">
-                                <button class="btn primary small" type="button" id="regenBtn">
+                                <button class="btn primary small" type="button" id="regenBtn" title="Regenerar prompt desde las opciones">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M23 4v6h-6M1 20v-6h6" />
@@ -1530,7 +1688,7 @@
                                     </svg>
                                     Regenerar
                                 </button>
-                                <button class="btn small" type="button" id="copyBtn">
+                                <button class="btn small" type="button" id="copyBtn" title="Copiar prompt al portapapeles">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <rect x="9" y="9" width="13" height="13" rx="2" />
@@ -1538,25 +1696,13 @@
                                     </svg>
                                     Copiar
                                 </button>
-                                <button class="btn small" type="button" id="downloadBtn" title="Descargar como archivo TXT">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-                                    </svg>
-                                    Descargar TXT
-                                </button>
-                                <button class="btn small" type="button" id="downloadMdBtn" title="Descargar como archivo Markdown (.md)">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                                        <polyline points="14 2 14 8 20 8" />
-                                        <line x1="16" y1="13" x2="8" y2="13" />
-                                        <line x1="16" y1="17" x2="8" y2="17" />
-                                        <polyline points="10 9 9 9 8 9" />
-                                    </svg>
-                                    Markdown
-                                </button>
+                                <button class="btn small" type="button" id="undoBtn" title="Deshacer última modificación manual">Deshacer</button>
+                                <button class="btn small" type="button" id="redoBtn" title="Rehacer modificación manual">Rehacer</button>
+                                <button class="btn small" type="button" id="downloadBtn" title="Descargar como archivo TXT">TXT</button>
+                                <button class="btn small" type="button" id="downloadMdBtn" title="Descargar como archivo Markdown (.md)">Markdown</button>
                                 <button class="btn small" type="button" id="exportJsonBtn" title="Exportar configuración completa en JSON">JSON</button>
+                                <button class="btn small" type="button" id="saveDraftBtn" title="Guardar borrador en almacenamiento local">Guardar</button>
+                                <button class="btn small" type="button" id="myDraftsBtn" data-modal="borradores" title="Ver mis borradores guardados">Borradores</button>
                                 <button class="btn small" type="button" id="printBtn" title="Imprimir prompt">Imprimir</button>
                                 <button class="btn small ghost" type="button" id="clearBtn" title="Reiniciar formulario y datos locales">Limpiar</button>
                             </div>
@@ -1894,6 +2040,32 @@
             </div>
         </div>
     </dialog>
+
+    <dialog class="modal" id="modal-borradores" aria-labelledby="modal-borradores-title">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h2 id="modal-borradores-title">Mis Borradores Locales</h2>
+                <button type="button" class="modal-close" data-close aria-label="Cerrar modal de borradores">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Guarda tus configuraciones y prompts para volver a utilizarlos en cualquier momento. Se almacenan de forma segura y privada en tu navegador.</p>
+                <div id="savedDraftsList" style="margin: 1rem 0; display: grid; gap: 0.6rem;"></div>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button type="button" class="btn primary small" id="saveCurrentDraftBtn">Guardar prompt actual</button>
+                    <button type="button" class="btn small ghost" id="clearAllDraftsBtn">Borrar todos los borradores</button>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <div class="mobile-floating-bar" id="mobileFloatingBar" aria-label="Acciones rápidas móviles">
+        <a href="#promptEditor" class="btn small primary" id="mobileJumpPrompt">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span id="mobilePromptBadge">Ver Prompt</span>
+        </a>
+        <button type="button" class="btn small" id="mobileQuickCopy">Copiar</button>
+        <button type="button" class="btn small ghost" id="mobileQuickRegen">Regenerar</button>
+    </div>
 
     <dialog class="modal" id="modal-cookies" aria-labelledby="modal-cookies-title">
         <div class="modal-card">
