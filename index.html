@@ -1504,7 +1504,7 @@
             }
         }
     </style>
-  <script type="module" crossorigin src="./assets/index-BYNkvpX1.js"></script>
+  <script type="module" crossorigin src="./assets/index-CiaCwnpN.js"></script>
 </head>
 
 <body>
@@ -1702,6 +1702,8 @@
                                 <button class="btn small" type="button" id="downloadMdBtn" title="Descargar como archivo Markdown (.md)">Markdown</button>
                                 <button class="btn small" type="button" id="exportJsonBtn" title="Exportar configuración completa en JSON">JSON</button>
                                 <button class="btn small" type="button" id="saveDraftBtn" title="Guardar borrador en almacenamiento local">Guardar</button>
+                                <button class="btn small" type="button" id="duplicateBtn" title="Crear una copia del prompt actual en borradores">Duplicar</button>
+                                <button class="btn small" type="button" id="compareBtn" data-modal="comparar" title="Comparar versión generada vs versión actual">Comparar</button>
                                 <button class="btn small" type="button" id="myDraftsBtn" data-modal="borradores" title="Ver mis borradores guardados">Borradores</button>
                                 <button class="btn small" type="button" id="printBtn" title="Imprimir prompt">Imprimir</button>
                                 <button class="btn small ghost" type="button" id="clearBtn" title="Reiniciar formulario y datos locales">Limpiar</button>
@@ -2054,6 +2056,37 @@
                     <button type="button" class="btn primary small" id="saveCurrentDraftBtn">Guardar prompt actual</button>
                     <button type="button" class="btn small ghost" id="clearAllDraftsBtn">Borrar todos los borradores</button>
                 </div>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="modal" id="modal-comparar" aria-labelledby="modal-comparar-title">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h2 id="modal-comparar-title">Comparador de Versiones de Prompt</h2>
+                <button type="button" class="modal-close" data-close aria-label="Cerrar modal de comparación">×</button>
+            </div>
+            <div class="modal-body">
+                <p>Compara la versión base generada automáticamente desde tus opciones frente a tu versión editada o mejorada.</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1rem 0;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                            <strong>Versión Generada (Opciones)</strong>
+                            <span id="compareGenMeta" class="dim" style="font-size: 0.8rem;"></span>
+                        </div>
+                        <textarea id="compareGenPrompt" class="textarea" rows="10" readonly style="width: 100%; font-family: var(--mono); font-size: 0.82rem;"></textarea>
+                        <button type="button" class="btn small ghost" id="useGenVersionBtn" style="margin-top: 0.5rem; width: 100%;">Restaurar versión de opciones</button>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+                            <strong>Versión Actual (Editor)</strong>
+                            <span id="compareCurMeta" class="dim" style="font-size: 0.8rem;"></span>
+                        </div>
+                        <textarea id="compareCurPrompt" class="textarea" rows="10" readonly style="width: 100%; font-family: var(--mono); font-size: 0.82rem;"></textarea>
+                        <button type="button" class="btn small primary" id="keepCurVersionBtn" style="margin-top: 0.5rem; width: 100%;">Conservar versión actual</button>
+                    </div>
+                </div>
+                <div id="compareSummary" style="background: var(--surface-2); padding: 0.75rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.85rem;"></div>
             </div>
         </div>
     </dialog>
